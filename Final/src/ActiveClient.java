@@ -69,28 +69,28 @@ public class ActiveClient extends MessageParser implements Runnable
                     if ( IsVerified == 0 ) System.exit(1);
                 }
                 System.out.println("***************************");
-                if ( Execute("GET_GAME_IDENTS") )
-                {
-                    String msg = GetMonitorMessage();
-                    System.out.println("ActiveClient [GET_GAME_IDENTS]:\n\t"+msg);
-                }
-                if ( Execute("RANDOM_PARTICIPANT_HOST_PORT") )
-                {
-                    String msg = GetMonitorMessage();
-                    System.out.println("ActiveClient [RANDOM_PARTICIPANT_HOST_PORT]:\n\t"+msg);
-                }
-                if ( Execute("PARTICIPANT_HOST_PORT", "FRANCO") )
-                {
-                    String msg = GetMonitorMessage();
-                    System.out.println("ActiveClient [PARTICIPANT_HOST_PORT]:\n\t"+msg);
-                }
-                if ( Execute("PARTICIPANT_STATUS") )
-                {
-                    String msg = GetMonitorMessage();
-                    System.out.println("ActiveClient [PARTICIPANT_STATUS]:\n\t"+msg);
-                }
-                ChangePassword(PASSWORD);
-                System.out.println("Password:"+PASSWORD);
+//                if ( Execute("GET_GAME_IDENTS") )
+//                {
+//                    String msg = GetMonitorMessage();
+//                    System.out.println("ActiveClient [GET_GAME_IDENTS]:\n\t"+msg);
+//                }
+//                if ( Execute("RANDOM_PARTICIPANT_HOST_PORT") )
+//                {
+//                    String msg = GetMonitorMessage();
+//                    System.out.println("ActiveClient [RANDOM_PARTICIPANT_HOST_PORT]:\n\t"+msg);
+//                }
+//                if ( Execute("PARTICIPANT_HOST_PORT", "FRANCO") )
+//                {
+//                    String msg = GetMonitorMessage();
+//                    System.out.println("ActiveClient [PARTICIPANT_HOST_PORT]:\n\t"+msg);
+//                }
+//                if ( Execute("PARTICIPANT_STATUS") )
+//                {
+//                    String msg = GetMonitorMessage();
+//                    System.out.println("ActiveClient [PARTICIPANT_STATUS]:\n\t"+msg);
+//                }
+//                ChangePassword(PASSWORD);
+//                System.out.println("Password:"+PASSWORD);
 
                 toMonitor.close(); 
                 out.close(); 

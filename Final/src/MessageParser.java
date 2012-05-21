@@ -1,5 +1,6 @@
 import java.util.*;
 import java.io.*;
+import java.math.BigInteger;
 
 
 public class MessageParser
@@ -33,6 +34,17 @@ public class MessageParser
     ObjectInputStream oin = null;
     ObjectOutputStream oout = null;
 
+    //Encryption stuff
+    BigInteger myPublicKey;
+    BigInteger mySecretKey;
+    PlantDHKey newKey = new PlantDHKey();
+    DiffieHellmanExchange dhExchange = new DiffieHellmanExchange();
+    Karn myKarn = null;
+    boolean IsEncrypted = false;
+
+    // Transfer stuff
+    String ROUNDS = "20";
+
     public MessageParser()
     {
         filename = "passwd.dat";
@@ -57,6 +69,7 @@ public class MessageParser
             sMesg = temp;
             decrypt = temp;
 
+            System.out.println("Received: " + decrypt);
             //After IDENT has been sent-to handle partially encrypted msg group
             while ( !(decrypt.trim().equals("WAITING:")) )
             {
@@ -123,7 +136,36 @@ public class MessageParser
         boolean success = false;
         try
         {
+            try {
+                    myPublicKey = dhExchange.getDHParmMakePublicKey("DHKey");
+            } catch (Exception e) {
+                    Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Caught exception: " + e);
+                    e.printStackTrace();
+            }
+            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "DH public Key: " + myPublicKey.toString());
 
+            if (CType == 0) {
+                    Execute(GetNextCommand(GetMonitorMessage(), ""));
+                    Execute(GetNextCommand(GetMonitorMessage(), ""));
+
+                    String passwordString = GetMonitorMessage();
+                    if (passwordString.contains("PASSWORD")) {
+                            String[] tmp = passwordString.split(" ");
+                            COOKIE = tmp[2];
+                            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + COOKIE);
+                            WritePersonalData(GlobalData.GetPassword(), COOKIE);
+                    }
+                    Execute("HOST_PORT");
+//                    Util.DebugPrint(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
+                    success = true;
+            }
+            if (CType == 1) {
+                    Execute(GetNextCommand(GetMonitorMessage(), ""));
+                    Execute(GetNextCommand(GetMonitorMessage(), ""));
+                    Execute(GetNextCommand(GetMonitorMessage(), ""));
+                    success = true;
+                    IsVerified = 2;
+            }
         }
         catch ( NullPointerException n )
         {
@@ -391,12 +433,16 @@ public class MessageParser
         PrintWriter pout = null;
         try
         {
+            pout = new PrintWriter(new FileWriter(filename));
+            if ( pout == null ) {
+                System.out.println("oh shit");
+                return false;
+            }
             if ( (Passwd != null) && !(Passwd.equals("")) )
             {
-                pout = new PrintWriter(new FileWriter(filename));
-                pout.println("PASSWORD");
                 pout.println(Passwd); //(PASSWORD);
             }
+            pout.println("PASSWORD");
             if ( (Cookie != null) && !(Cookie.equals("")) )
             {
                 pout.println("COOKIE");
