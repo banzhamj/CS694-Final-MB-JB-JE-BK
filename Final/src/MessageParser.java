@@ -22,10 +22,8 @@ public class MessageParser
     public static int IsVerified;
 
     //File I/O Declarations
-    BufferedReader fIn = null;
-    PrintWriter fOut = null; 
+    PermanentStorage storage = null;
     static String InputFileName = "Input.dat";  
-    static String ResourceFileName = "Resources.dat";
     String[] cmdArr = new String[COMMAND_LIMIT];
 
     static String MyKey;
@@ -48,12 +46,14 @@ public class MessageParser
     public MessageParser()
     {
         filename = "passwd.dat";
+        storage = new PermanentStorage(this);
         GetIdentification(); // Gets Password and Cookie from 'passwd.dat' file
     }
 
     public MessageParser(String ident, String password)
     {
         filename = ident+".dat";
+        storage = new PermanentStorage(this, ident);
         PASSWORD = password;
         IDENT = ident;
         GetIdentification(); // Gets Password and Cookie from 'passwd.dat' file
@@ -153,7 +153,7 @@ public class MessageParser
                             String[] tmp = passwordString.split(" ");
                             COOKIE = tmp[2];
                             Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + COOKIE);
-                            WritePersonalData(GlobalData.GetPassword(), COOKIE);
+                            storage.WritePersonalData(GlobalData.GetPassword(), COOKIE);
                     }
                     Execute("HOST_PORT");
 //                    Util.DebugPrint(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
@@ -320,7 +320,7 @@ public class MessageParser
                 success = true;
                 try
                 {
-                    SaveResources(mesg);  //Save the data to a file
+                    storage.SaveResources(mesg);  //Save the data to a file
                     SendIt("SYNTHESIZE WEAPONS");        
                     mesg = GetMonitorMessage();
                     SendIt("SYNTHESIZE COMPUTERS");        
@@ -331,7 +331,7 @@ public class MessageParser
                     {
                         mesg = GetMonitorMessage();
                         success = true;
-                        SaveResources(mesg);//Save the data to a file
+                        storage.SaveResources(mesg);//Save the data to a file
                     }
                 }
                 catch ( IOException e )
@@ -349,43 +349,6 @@ public class MessageParser
     }
 
     public void MakeFreeFlowCommands() throws IOException {
-    }
-
-    public void SaveResources(String res) throws IOException {
-        System.out.println("MessageParser [SaveResources]:");
-        try  // If an error occurs then don't update the Resources File
-        {
-            String temp = GetNextCommand (res, "COMMAND_ERROR");
-            if ( (temp == null) || (temp.equals("")) )
-            {
-                fOut = new PrintWriter(new FileWriter(ResourceFileName));        
-                t = new StringTokenizer(res," :\n");
-                try
-                {
-                    temp = t.nextToken();
-                    temp = t.nextToken();
-                    temp = t.nextToken();
-                    System.out.println("MessageParser [SaveResources]: got "+
-                                       "token before write: "+temp);
-                    for ( int i=0 ; i < 20 ; i++ )
-                    {
-                        fOut.println(temp);
-                        fOut.flush();
-                        temp = t.nextToken();
-                    }
-                }
-                catch ( NoSuchElementException ne )
-                {
-                    temp = "";
-                    fOut.close();
-                }
-            }
-            fOut.close();
-        }
-        catch ( IOException e )
-        {
-            fOut.close();
-        }
     }
 
     public void HandleTradeResponse(String cmd) throws IOException {
@@ -426,47 +389,6 @@ public class MessageParser
     {
     }                                      
 
-
-    // Write Personal data such as Password and Cookie
-    public boolean  WritePersonalData(String Passwd,String Cookie)
-    {
-        boolean success = false;
-        PrintWriter pout = null;
-        try
-        {
-            pout = new PrintWriter(new FileWriter(filename));
-            if ( pout == null ) {
-                System.out.println("oh shit");
-                return false;
-            }
-            if ( (Passwd != null) && !(Passwd.equals("")) )
-            {
-                pout.println(Passwd); //(PASSWORD);
-            }
-            pout.println("PASSWORD");
-            if ( (Cookie != null) && !(Cookie.equals("")) )
-            {
-                pout.println("COOKIE");
-                pout.flush();
-                pout.println(Cookie);
-                pout.flush();
-            }
-            pout.close();
-            success = true;
-        }
-        catch ( IOException e )
-        {
-            if ( pout != null )
-            {
-                pout.close();
-            }
-            return success;
-        }
-        catch ( NumberFormatException n )
-        {
-        }
-        return success;    
-    }
 
     //Check whether the Monitor is Authentic
     public boolean Verify(String passwd,String chksum)
