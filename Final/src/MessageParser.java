@@ -184,6 +184,7 @@ public class MessageParser
         boolean success = false;
         try
         {
+            // TODO JE:  do we need this for CS694?
             if ( sentmessage.trim().equals("PARTICIPANT_HOST_PORT") )
             {
                 sentmessage = sentmessage.concat(" ");
@@ -257,12 +258,12 @@ public class MessageParser
                 SendIt(sentmessage);
                 success = true;
             }
-            else if ( sentmessage.trim().equals("PARTICIPANT_STATUS") )
+            else if ( sentmessage.trim().equals("PLAYER_STATUS") )
             {
                 SendIt(sentmessage);
                 success = true;
             }
-            else if ( sentmessage.trim().equals("RANDOM_PARTICIPANT_HOST_PORT") )
+            else if ( sentmessage.trim().equals("RANDOM_PLAYER_HOST_PORT") )
             {
                 SendIt(sentmessage);
                 success = true;
@@ -313,7 +314,7 @@ public class MessageParser
 
         if ( id == null ) // No Require, can Launch Free Form Commands Now  
         {
-            if ( Execute("PARTICIPANT_STATUS") ) //Check for Player Status
+            if ( Execute("PLAYER_STATUS") ) //Check for Player Status
             {
                 mesg = GetMonitorMessage();
                 success = true;
@@ -326,7 +327,7 @@ public class MessageParser
                     mesg = GetMonitorMessage();
                     SendIt("SYNTHESIZE VEHICLES");        
                     mesg = GetMonitorMessage();        
-                    if ( Execute("PARTICIPANT_STATUS") ) //Check for Player Status
+                    if ( Execute("PLAYER_STATUS") ) //Check for Player Status
                     {
                         mesg = GetMonitorMessage();
                         success = true;
