@@ -16,6 +16,7 @@ public class MessageParser
     StringTokenizer t;
     String IDENT = "Skipper";
     String PASSWORD = "franco";
+    String newPassword;
     static String COOKIE ="bkuhn";
     String PPCHECKSUM="";
     int HOST_PORT;
@@ -189,6 +190,26 @@ public class MessageParser
             {
                 sentmessage = sentmessage.concat(" ");
                 sentmessage = sentmessage.concat(arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("SYNTHESIZE") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("GET_CERTIFICATE") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("TRADE_RESPONSE") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("WAR_TRUCE_RESPONSE") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("WAR_STATUS") ) {
+                sentmessage = sentmessage.concat(" " + arg);
                 SendIt(sentmessage);
                 success = true;
             }
