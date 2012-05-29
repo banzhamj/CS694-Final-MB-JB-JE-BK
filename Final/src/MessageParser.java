@@ -179,7 +179,7 @@ public class MessageParser
         return success;
     }
 
-    //Handle Directives and Execute appropriate commands with one argument
+    //Handle Directives and Execute appropriate commands with <s>one</s> argument(s)
     public boolean Execute (String sentmessage, String arg)
     {
         boolean success = false;
@@ -200,7 +200,23 @@ public class MessageParser
                 sentmessage = sentmessage.concat(" " + arg);
                 SendIt(sentmessage);
                 success = true;
+            } else if ( sentmessage.trim().equals("TRADE_REQUEST") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
             } else if ( sentmessage.trim().equals("TRADE_RESPONSE") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("WAR_DECLARE") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("WAR_DEFEND") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("WAR_TRUCE_OFFER") ) {
                 sentmessage = sentmessage.concat(" " + arg);
                 SendIt(sentmessage);
                 success = true;
@@ -209,6 +225,14 @@ public class MessageParser
                 SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("WAR_STATUS") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("PLAYER_STATUS_CRACK") ) {
+                sentmessage = sentmessage.concat(" " + arg);
+                SendIt(sentmessage);
+                success = true;
+            } else if ( sentmessage.trim().equals("PLAYER_MONITOR_PASSWORD_CRACK") ) {
                 sentmessage = sentmessage.concat(" " + arg);
                 SendIt(sentmessage);
                 success = true;
