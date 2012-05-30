@@ -138,12 +138,12 @@ public class GameBoard extends Applet {
             // Add client and server log windows
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(18,25)));
+            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(30,50)));
             tempPanel.add("South", new JLabel("Active Client Log\n\n\n", 0));
             add("West", tempPanel);
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(18,25)));
+            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(30,50)));
             tempPanel.add("South", new JLabel("Passive Server Log\n\n\n", 0));
             add("East", tempPanel);
             
@@ -176,17 +176,17 @@ public class GameBoard extends Applet {
             if ( e.getSource() == encryptButton ) {
                 // TODO
             } else if ( e.getSource() == identButton ) {
-                // TODO
+                ac.Execute("IDENT");
             } else if ( e.getSource() == passwordButton ) {
-                // TODO
+                ac.Execute("PASSWORD");
             } else if ( e.getSource() == hportButton ) {
-                // TODO
+                ac.Execute("HOST_PORT");
             } else if ( e.getSource() == aliveButton ) {
-                // TODO
+                ac.Execute("ALIVE");
             } else if ( e.getSource() == gameIdentsButton ) {
                 ac.Execute( "GET_GAME_IDENTS" );
             } else if ( e.getSource() == changePasswordButton ) {
-                // TODO
+                ac.ChangePassword(passwordArg.getText());
             } else if ( e.getSource() == statusButton ) {
                 ac.Execute( "PLAYER_STATUS" );
             } else if ( e.getSource() == signOffButton ) {
@@ -206,15 +206,15 @@ public class GameBoard extends Applet {
             } else if ( e.getSource() == warStatusButton ) {
                 // TODO
             } else if ( e.getSource() == warTruceResponseButton ) {
-                // TODO
+                ac.Execute("WAR_TRUCE_RESPONSE", truceResponseBox.getSelectedItem().toString());
             } else if ( e.getSource() == warDefendButton ) {
                 // TODO
             } else if ( e.getSource() == getCertButton ) {
-                // TODO
+                ac.Execute("GET_CERTIFICATE", getCertArg.getText());
             } else if ( e.getSource() == tradeRequestButton ) {
                 // TODO
             } else if ( e.getSource() == tradeResponeButton ) {
-                // TODO
+                ac.Execute("TRADE_RESPONSE", tradeResponseBox.getSelectedItem().toString());
             } else if ( e.getSource() == synthesizeButton ) {
                 // TODO
             }
