@@ -55,6 +55,8 @@ public class GameBoard extends Applet {
     JTextArea serverLog;
     JLabel title;
     String result;
+    
+    ActiveClient ac;
 
     class Frame extends JFrame implements ActionListener {
 
@@ -182,21 +184,21 @@ public class GameBoard extends Applet {
             } else if ( e.getSource() == aliveButton ) {
                 // TODO
             } else if ( e.getSource() == gameIdentsButton ) {
-                // TODO
+                ac.Execute( "GET_GAME_IDENTS" );
             } else if ( e.getSource() == changePasswordButton ) {
                 // TODO
             } else if ( e.getSource() == statusButton ) {
-                // TODO
+                ac.Execute( "PLAYER_STATUS" );
             } else if ( e.getSource() == signOffButton ) {
-                // TODO
+                ac.Execute( "SIGN_OFF" );
             } else if ( e.getSource() == quitButton ) {
-                // TODO
+                ac.Execute( "QUIT" );
             } else if ( e.getSource() == makeCertButton ) {
                 // TODO
             } else if ( e.getSource() == playerHostPortButton ) {
                 // TODO
             } else if ( e.getSource() == randomHostPortButton ) {
-                // TODO
+                ac.Execute( "RANDOM_PLAYER_HOST_PORT" );
             } else if ( e.getSource() == declareWarButton ) {
                 // TODO
             } else if ( e.getSource() == warTruceOfferButton ) {
@@ -225,5 +227,7 @@ public class GameBoard extends Applet {
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        ac = new ActiveClient();
     }
 }
