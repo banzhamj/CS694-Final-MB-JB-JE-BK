@@ -1,8 +1,5 @@
-
 import java.applet.Applet;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +13,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class GameBoard extends Applet {
+
+	private static final long serialVersionUID = 944417097790033967L;
+	public static String MONITOR_NAME = "helios.ececs.uc.edu";
+    public static int MONITOR_PORT = 8160;
+    public static int HOST_PORT = 20000 +(int)(Math.random()*1000);
+    public static String name = "asdfname";
+    public static String password = "asdfpass";
 
     JButton encryptButton;
     JButton identButton;
@@ -53,14 +57,21 @@ public class GameBoard extends Applet {
     JComboBox tradeResponseBox;
     JTextArea clientLog;
     JTextArea serverLog;
-    JLabel title;
+    JTextField portTextField;
+    JButton startServerButton;
+    JButton stopServerButton;
+    JButton startClientButton;
+    JButton stopClientButton;
     String result;
     
     ActiveClient ac;
+    Server server;
 
     class Frame extends JFrame implements ActionListener {
 
-        Frame() {
+		private static final long serialVersionUID = 1264061647495656599L;
+
+		Frame() {
             setLayout(new BorderLayout());
         }
 
@@ -131,21 +142,27 @@ public class GameBoard extends Applet {
             truceResponseBox.addItem("Decline");
             add("South", tempPanel);
             
-            // Add window title
-            add("Center", title = new JLabel("Command & Control", 0));
-            title.setFont(new Font("TimesRoman", 1, 20));
-            
             // Add client and server log windows
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(30,50)));
+            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(30,40)));
             tempPanel.add("South", new JLabel("Active Client Log\n\n\n", 0));
             add("West", tempPanel);
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(30,50)));
+            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(30,40)));
             tempPanel.add("South", new JLabel("Passive Server Log\n\n\n", 0));
             add("East", tempPanel);
+            
+            JPanel topPanel = new JPanel();
+            topPanel.setLayout( new GridLayout( 3, 2 ) );
+            topPanel.add( new JLabel( "Host port" ) );
+            topPanel.add( portTextField = new JTextField( "20000" ) );
+            topPanel.add( startServerButton = new JButton( "Start Server" ) );
+            topPanel.add( stopServerButton = new JButton( "Stop Server" ) );
+            topPanel.add( startClientButton = new JButton( "Start Client" ) );
+            topPanel.add( stopClientButton = new JButton( "Stop Client" ) );
+            add("North", topPanel);
             
             // Add action listeners for all buttons
             encryptButton.addActionListener(this);
@@ -170,6 +187,10 @@ public class GameBoard extends Applet {
             tradeRequestButton.addActionListener(this);
             tradeResponeButton.addActionListener(this);
             synthesizeButton.addActionListener(this);
+            startServerButton.addActionListener(this);
+            stopServerButton.addActionListener(this);
+            startClientButton.addActionListener(this);
+            stopClientButton.addActionListener(this);
         }
         
         public void actionPerformed(ActionEvent e) {
@@ -217,6 +238,14 @@ public class GameBoard extends Applet {
                 ac.Execute("TRADE_RESPONSE", tradeResponseBox.getSelectedItem().toString());
             } else if ( e.getSource() == synthesizeButton ) {
                 // TODO
+            } else if ( e.getSource() == startServerButton ) {
+                server.start();
+            } else if ( e.getSource() == stopServerButton ) {
+                //TODO
+            } else if ( e.getSource() == startClientButton ) {
+                ac.start();
+            } else if ( e.getSource() == stopClientButton ) {
+                //TODO
             }
         }
     }
@@ -228,6 +257,7 @@ public class GameBoard extends Applet {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        ac = new ActiveClient();
+        ac = new ActiveClient( MONITOR_NAME, MONITOR_PORT, HOST_PORT, 0, name, password );
+        server = new Server( HOST_PORT, HOST_PORT, name, password );
     }
 }
