@@ -1,7 +1,13 @@
 import java.util.*;
 import java.io.*;
 import java.math.BigInteger;
-
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MessageParser
 {
@@ -11,6 +17,13 @@ public class MessageParser
     public static String HOSTNAME;
     PrintWriter out = null; 
     BufferedReader in = null; 
+    
+    KarnBufferedReader karnIn = null;
+    KarnPrintWriter karnOut = null;
+    
+    PrintWriter plainOut = null;
+    BufferedReader plainIn = null;
+    
     String mesg,sentmessage;
     String filename;
     StringTokenizer t;
@@ -35,9 +48,6 @@ public class MessageParser
     //Encryption stuff
     BigInteger myPublicKey;
     BigInteger mySecretKey;
-    PlantDHKey newKey = new PlantDHKey();
-    DiffieHellmanExchange dhExchange = new DiffieHellmanExchange();
-    Karn myKarn = null;
     boolean IsEncrypted = false;
 
     // Transfer stuff
@@ -61,30 +71,24 @@ public class MessageParser
 
     public String GetMonitorMessage()
     {
-        String sMesg="", decrypt="";
+        String sMesg="";
         try
         {
             String temp = in.readLine();
-            first = temp; // 1st
             sMesg = "";
-            decrypt = temp;
-
-            System.out.println("Received: " + decrypt);
+           
             //After IDENT has been sent-to handle partially encrypted msg group
-            while ( !(decrypt.trim().equals("WAITING:")) )
-            {
+            while ( !(temp.trim().equals("WAITING:")) )
+            {                
+                System.out.println("Received: " + temp);
+                
+                if ( temp != null ) {
+                    sMesg = sMesg.concat(temp);
+                }
                 temp = in.readLine();
-                if (IsEncrypted && temp != null) {
-                        decrypt = myKarn.decrypt(temp);
-                } else {
-                        decrypt = temp;
-                }
-                if ( decrypt != null ) {
-                    sMesg = sMesg.concat(decrypt);
-                }
                 sMesg = sMesg.concat("\n");
             } // sMesg now contains the Message Group sent by the Monitor
-            decrypt = "";
+            temp = "";
 
         } catch (IOException e) {
                 Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: error "
@@ -93,6 +97,7 @@ public class MessageParser
                 e.printStackTrace();
         } catch (NullPointerException n) {
                 sMesg = "";
+                Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: NULL POINTER");
                 n.printStackTrace();
         } catch (NumberFormatException o) {
                 Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: number "
@@ -108,7 +113,7 @@ public class MessageParser
                                 + "EXCEPTION!\n\t" + this);
                 sMesg = "";
                 ae.printStackTrace();
-        }
+        } 
         Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage (" + CType + ")]: " + sMesg);
         return sMesg;
     }
@@ -132,25 +137,36 @@ public class MessageParser
             return null;
         }
     }
+    
+    public PlayerCertificate getRMICertificate(String ident)
+    {
+        PlayerCertificate pc = null;
+        try {
+            String server = "rmi://" + HOSTNAME + "/CertRegistry";
+            CertRemote r = (CertRemote)(Naming.lookup(server));
+            pc = r.getCert(ident);
+        } catch (NotBoundException ex) {
+            System.out.println("NotBoundException!");
+        } catch (MalformedURLException ex) {
+            System.out.println("MalformedURLException!");
+        } catch (RemoteException ex) {
+            System.out.println("RemoteException!");
+        }
+        return pc;
+    }    
 
     public boolean Login()
     {
         boolean success = false;
 
         try {
-            try {
-                myPublicKey = dhExchange.getDHParmMakePublicKey("DHKey");
-            } catch (Exception e) {
-                Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Caught exception: " + e);
-                e.printStackTrace();
-            }
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "DH public Key: " + myPublicKey.toString());
-
+                        
             if (CType == 0) {
                 Execute(GetNextCommand(GetMonitorMessage(), ""));
                 Execute(GetNextCommand(GetMonitorMessage(), ""));
-
-                String passwordString = GetMonitorMessage();
+                
+                String passwordString = in.readLine();
+                
                 if (passwordString.contains("PASSWORD")) {
                     String[] tmp = passwordString.split(" ");
                     //COOKIE = tmp[2];
@@ -158,7 +174,7 @@ public class MessageParser
                     Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + tmp[2]);
                     storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
                 }
-                Execute("HOST_PORT");
+                Execute(GetNextCommand(GetMonitorMessage(), ""));
                 Util.DebugPrint(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
                 success = true;
             }
@@ -169,6 +185,9 @@ public class MessageParser
                 success = true;
                 IsVerified = 2;
             }
+        } catch (IOException ex) {
+            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[Login]: IO error "
+                            + "at login:\n\t" + ex);
         } catch (NullPointerException n) {
             Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[Login]: null pointer error "
                             + "at login:\n\t" + n);
@@ -192,7 +211,7 @@ public class MessageParser
                 sentmessage = sentmessage.concat(amount);
                 sentmessage = sentmessage.concat(" FROM ");
                 sentmessage = sentmessage.concat(from);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
         } catch (IOException e) {
@@ -219,51 +238,51 @@ public class MessageParser
             {
                 sentmessage = sentmessage.concat(" ");
                 sentmessage = sentmessage.concat(arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("SYNTHESIZE") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("GET_CERTIFICATE") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("TRADE_REQUEST") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("TRADE_RESPONSE") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("WAR_DECLARE") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("WAR_DEFEND") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("WAR_TRUCE_OFFER") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("WAR_TRUCE_RESPONSE") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("WAR_STATUS") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("PLAYER_STATUS_CRACK") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             } else if ( sentmessage.trim().equals("PLAYER_MONITOR_PASSWORD_CRACK") ) {
                 sentmessage = sentmessage.concat(" " + arg);
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
         }
@@ -281,24 +300,60 @@ public class MessageParser
     }
 
     //Handle Directives and Execute appropriate commands
-    public boolean Execute (String sentmessage)
+    public boolean Execute (String command)
     {
+        String sentmessage = command.trim();        
+        
         boolean success = false; 
         try
-        {
-            if ( sentmessage.trim().equals("IDENT") )
+        {            
+            if ( sentmessage.equals("IDENT") )
             {
-                sentmessage = sentmessage.concat(" ");
-                sentmessage = sentmessage.concat(IDENT);
-                SendIt(myKarn.encrypt(sentmessage));
-
+                if ( this.CType == 0 ) {
+                    PlayerCertificate monCert = getRMICertificate("MONITOR");
+                    RSA myKey = new RSA(256);
+                    BigInteger m = myKey.publicKey().getModulus();
+                    String myHalf = monCert.getPublicKey().encrypt(m).toString(32);
+                    
+                    SendIt("IDENT " + IDENT + " " + myHalf);
+                    
+                    String response = in.readLine();
+                    String number = response.split("\\s+")[2];                    
+                    
+                    BigInteger srvHalf = myKey.decryptNum(new BigInteger(number, 32));
+                    byte mine[] = myKey.publicKey().getModulus().toByteArray();
+                    byte monitor[] = srvHalf.toByteArray();
+                    
+                    int keySize = 512;
+                    
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream(keySize/8);
+                    
+                    for(int i=0; i < keySize/16; i++){
+                        bos.write(monitor[i]);
+                        bos.write(mine[i]);
+                    }
+                    BigInteger sharedSecret = new BigInteger(1, bos.toByteArray());
+                    
+                    karnIn = new KarnBufferedReader(plainIn, sharedSecret);
+                    try {
+                        karnOut = new KarnPrintWriter(plainOut, true, sharedSecret);
+                    } catch (NoSuchAlgorithmException ex) {
+                        System.out.println("No Such Algorithm Exception!");
+                    }
+                    
+                    in = karnIn;
+                    out = karnOut;                    
+                } else {                     
+                    SendIt("IDENT " + IDENT);                    
+                }            
+                
                 success = true;
             }
             else if ( sentmessage.trim().equals("PASSWORD") )
             {
                 sentmessage = sentmessage.concat(" ");
                 sentmessage = sentmessage.concat(PASSWORD);
-                SendIt(myKarn.encrypt(sentmessage.trim()));
+                SendIt(sentmessage.trim());
                 success = true;  
             }
             else if ( sentmessage.trim().equals("HOST_PORT") )
@@ -307,39 +362,39 @@ public class MessageParser
                 sentmessage = sentmessage.concat(HOSTNAME);//hostname
                 sentmessage = sentmessage.concat(" ");
                 sentmessage = sentmessage.concat(String.valueOf(HOST_PORT));
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;                                  
             }
             else if ( sentmessage.trim().equals("ALIVE") )
             {
                 sentmessage = sentmessage.concat(" ");
                 sentmessage = sentmessage.concat(GlobalData.GetCookie());
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
             else if ( sentmessage.trim().equals("QUIT") )
             {
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
             else if ( sentmessage.trim().equals("SIGN_OFF") )
             {
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
             else if ( sentmessage.trim().equals("GET_GAME_IDENTS") )
             {
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
             else if ( sentmessage.trim().equals("PLAYER_STATUS") )
             {
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
             else if ( sentmessage.trim().equals("RANDOM_PLAYER_HOST_PORT") )
             {
-                SendIt(myKarn.encrypt(sentmessage));
+                SendIt(sentmessage);
                 success = true;
             }
         } catch (IOException e) {
@@ -391,13 +446,13 @@ public class MessageParser
                 try
                 {
                     storage.SaveResources(mesg);  //Save the data to a file
-                    SendIt(myKarn.encrypt("SYNTHESIZE WEAPONS"));        
+                    SendIt("SYNTHESIZE WEAPONS");        
                     mesg = GetMonitorMessage();
-                    SendIt(myKarn.encrypt("SYNTHESIZE COMPUTERS"));        
+                    SendIt("SYNTHESIZE COMPUTERS");        
                     mesg = GetMonitorMessage();
-                    SendIt(myKarn.encrypt("SYNTHESIZE VEHICLES"));        
+                    SendIt("SYNTHESIZE VEHICLES");        
                     mesg = GetMonitorMessage();        
-                    if ( Execute("PLAYER_STATUS") ) //Check for Player Status
+                    if ( Execute("PLAYER_STATUS")) //Check for Player Status
                     {
                         mesg = GetMonitorMessage();
                         success = true;

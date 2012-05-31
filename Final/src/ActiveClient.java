@@ -59,8 +59,11 @@ public class ActiveClient extends MessageParser implements Runnable
                                  " port: "+MONITOR_PORT+"...");
                 toMonitor = new Socket(MonitorName, MONITOR_PORT);
                 System.out.println("completed.");
-                out = new PrintWriter(toMonitor.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(toMonitor.getInputStream()));
+                plainOut = new PrintWriter(toMonitor.getOutputStream(), true);
+                plainIn = new BufferedReader(new InputStreamReader(toMonitor.getInputStream()));
+                
+                out = plainOut;
+                in = plainIn;
 
                 HOSTNAME = toMonitor.getLocalAddress().getHostName();
                 CType = 0;   //Indicates Client 
