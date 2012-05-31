@@ -68,10 +68,6 @@ public class GameBoard extends Applet {
     JTextArea clientLog;
     JTextArea serverLog;
     JTextField portTextField;
-    JButton startServerButton;
-    JButton stopServerButton;
-    JButton startClientButton;
-    JButton stopClientButton;
     String result;
     
     ActiveClient ac;
@@ -293,14 +289,6 @@ public class GameBoard extends Applet {
                 ac.Execute("TRADE_RESPONSE", tradeResponseBox.getSelectedItem().toString());
             } else if ( e.getSource() == synthesizeButton ) {
                 // TODO
-            } else if ( e.getSource() == startServerButton ) {
-                server.start();
-            } else if ( e.getSource() == stopServerButton ) {
-                //TODO
-            } else if ( e.getSource() == startClientButton ) {
-                ac.start();
-            } else if ( e.getSource() == stopClientButton ) {
-                //TODO
             }
         }
     }
