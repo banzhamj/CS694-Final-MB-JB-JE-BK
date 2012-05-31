@@ -19,8 +19,7 @@ public class Server implements Runnable
         {
             s = new ServerSocket(p);
             MONITOR_PORT = p;
-            LOCAL_PORT=lp;
-            int i = 1;
+            LOCAL_PORT = lp;
         }
         catch ( IOException e )
         {

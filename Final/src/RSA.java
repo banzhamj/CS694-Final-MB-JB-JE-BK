@@ -26,13 +26,14 @@
 
 
 */
-import java.lang.*;
 import java.math.*;
 import java.util.*;
 import java.io.*;
 import java.security.*;
 
 public class RSA implements Serializable {
+
+	private static final long serialVersionUID = 4616784389531942621L;
 	/** Constants I'll need later */
 	private static BigInteger FOUR = new BigInteger("4");
 	public  static BigInteger E = new BigInteger("65537");

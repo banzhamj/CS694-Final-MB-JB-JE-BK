@@ -25,9 +25,10 @@
 */
 import java.math.BigInteger;
 import java.io.Serializable;
-import java.security.*;
 
 public class PlayerCertificate implements Serializable {
+
+	private static final long serialVersionUID = -6380823508900270476L;
 	private BigInteger h;
 	private String playerName;
     private PubRSA publicKey;

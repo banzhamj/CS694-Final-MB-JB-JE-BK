@@ -33,6 +33,9 @@ import java.math.BigInteger;
 import java.io.Serializable;
 
 public class PubRSA implements Serializable {
+
+	private static final long serialVersionUID = -4880882474760986889L;
+
 	/** The components of the public key */
 	BigInteger e, n;
 
