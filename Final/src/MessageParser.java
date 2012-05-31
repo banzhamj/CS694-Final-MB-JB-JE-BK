@@ -420,27 +420,34 @@ public class MessageParser
     }
 
     public void MakeFreeFlowCommands() throws IOException {
+    	// TODO
     }
 
     public void HandleTradeResponse(String cmd) throws IOException {
+    	// TODO
     }
 
     public boolean IsTradePossible(String TradeMesg)
     {
+    	// TODO
         return false;
     }
 
     public int GetResource(String choice) throws IOException {
+    	// TODO
         return 0;
     }
 
     public void HandleWarResponse(String cmd) throws IOException{
+    	// TODO
     }
 
     public void DoTrade(String cmd)  throws IOException{
+    	// TODO
     }
 
     public void DoWar(String cmd)  throws IOException{
+    	// TODO
     }
 
     public void ChangePassword(String newpassword)
@@ -454,21 +461,27 @@ public class MessageParser
     //throws IOException
     public void UpdatePassword(String cmd, String newpassword)
     {
+    	// TODO
+    	
+    	// is this a dup of ChangePassword() above?
     }
 
     public void GetIdentification()
     {
+    	// TODO
     }                                      
 
 
     //Check whether the Monitor is Authentic
     public boolean Verify(String passwd,String chksum)
     {
+    	// TODO
         return false;
     }
 
     public boolean IsMonitorAuthentic(String MonitorMesg)
     {
+    	// TODO
         return false;
     }
 }
