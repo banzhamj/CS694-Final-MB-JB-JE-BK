@@ -10,7 +10,8 @@ class ConnectionHandler extends MessageParser implements Runnable
     public ConnectionHandler (Socket i, int c, String name, String password)
     {
         super(name, password);
-        incoming = i;  counter = c;
+        incoming = i;
+        counter = c;
     }
 
     public void run()
@@ -20,7 +21,6 @@ class ConnectionHandler extends MessageParser implements Runnable
             in = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
             out = new PrintWriter(incoming.getOutputStream(),true);
 
-            boolean done = false;
             HOST_PORT = Server.LOCAL_PORT;
             CType = 1;  //Indicates Server
             System.out.println("Starting login from Server..");
