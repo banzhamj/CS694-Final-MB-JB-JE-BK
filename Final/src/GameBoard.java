@@ -87,7 +87,7 @@ public class GameBoard extends Applet {
             monitorBox.addItem("helios.ececs.uc.edu");
             monitorBox.addItem("gauss.ececs.uc.edu");
             monitorBox.addItem("localhost");
-            monitorBox.setSelectedIndex(1);
+            monitorBox.setSelectedIndex(0);
             tempPanel.add(usernameArg = new JTextArea());
             tempPanel.add(new JLabel("Host Port", JLabel.CENTER));
             tempPanel.add(new JLabel("  "));
