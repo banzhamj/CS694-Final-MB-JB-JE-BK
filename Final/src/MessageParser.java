@@ -406,6 +406,7 @@ public class MessageParser
                 }
                 catch ( IOException e )
                 {
+                	e.printStackTrace();
                 }
             }
         }

@@ -102,11 +102,13 @@ public class ActiveClient extends MessageParser implements Runnable
                 }
                 catch ( Exception e )
                 {
+                	e.printStackTrace();
                 }
 
             }
             catch ( UnknownHostException e )
             {
+            	e.printStackTrace();
             }
             catch ( IOException e )
             {
@@ -117,6 +119,7 @@ public class ActiveClient extends MessageParser implements Runnable
                 }
                 catch ( IOException ioe )
                 {
+                	e.printStackTrace();
                 }
                 catch ( NullPointerException n )
                 {
@@ -130,6 +133,7 @@ public class ActiveClient extends MessageParser implements Runnable
                     }
                     catch ( IOException ioe )
                     {
+                    	e.printStackTrace();
                     }
                 }
             }

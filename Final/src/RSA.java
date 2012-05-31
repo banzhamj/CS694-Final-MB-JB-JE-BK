@@ -94,6 +94,7 @@ public class RSA implements Serializable {
 			return new String(signNum(m).toByteArray(), "ISO-8859-1");
 		} catch(UnsupportedEncodingException uex) {
 			/** LATIN-1 not supported, you are screwed */
+			uex.printStackTrace();
 			return null;
 		}
 	}

@@ -39,9 +39,11 @@ class ConnectionHandler extends MessageParser implements Runnable
         }
         catch ( IOException e )
         {
+        	e.printStackTrace();
         }
         catch ( NullPointerException n )
         {
+        	n.printStackTrace();
         }
     }
 

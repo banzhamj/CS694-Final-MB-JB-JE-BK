@@ -56,6 +56,7 @@ public class PermanentStorage {
         }
         catch ( NumberFormatException n )
         {
+        	n.printStackTrace();
         }
         return success;
     }
