@@ -3,7 +3,8 @@ import java.net.*;
 
 public class Server implements Runnable
 {
-
+    GameBoard gb;
+    Util logger;
     ServerSocket s = null;
     public static int MONITOR_PORT;
     public static int LOCAL_PORT; 
@@ -12,8 +13,10 @@ public class Server implements Runnable
     String PASSWORD;
     public boolean connected = false;
 
-    public Server(int p, int lp, String name, String password)
+    public Server(GameBoard gb, int p, int lp, String name, String password)
     {
+        this.gb = gb;
+        logger = new Util(gb.serverLog);
         IDENT = name;
         PASSWORD = password;
         try
@@ -23,9 +26,7 @@ public class Server implements Runnable
             LOCAL_PORT = lp;
         }
         catch ( IOException e )
-        {
-			e.printStackTrace();
-        }
+        {}
     }
 
     public void start()
@@ -45,14 +46,14 @@ public class Server implements Runnable
             for ( ;; )
             {
                 Socket incoming =  s.accept();
-                new ConnectionHandler(incoming,i,IDENT,PASSWORD).start(); 
+                new ConnectionHandler(gb, incoming,i,IDENT,PASSWORD).start();
                 //Spawn a new thread for each new connection
                 i++;
             } 
         }
         catch ( Exception e )
         {
-            System.out.println("Server [run]: Error in Server: "  + e);
+            logger.Print(DbgSub.SERVER, "[run]: Error in Server: "  + e);
         }
     }
 }

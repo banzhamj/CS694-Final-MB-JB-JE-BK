@@ -57,21 +57,24 @@ public class GameBoard extends Applet {
     JComboBox tradeResponseBox;
     JComboBox monitorBox;
     JComboBox monitorPortBox;
+    JTextArea hostPortArg;
     JTextArea usernameArg;
-    JTextArea loginPasswdArg;
+    JTextArea loginPasswordArg;
     JTextArea clientLog;
     JTextArea serverLog;
     JTextField portTextField;
     String result;
     
-    ActiveClient ac;
-    Server server;
+    ActiveClient ac = null;
+    Server server = null;
     
     class Frame extends JFrame implements ActionListener {
 
-		private static final long serialVersionUID = 1264061647495656599L;
+        GameBoard gb;
+        private static final long serialVersionUID = 1264061647495656599L;
 
-		Frame() {
+        Frame(GameBoard gb) {
+            this.gb = gb;
             setLayout(new BorderLayout());
         }
 
@@ -80,14 +83,14 @@ public class GameBoard extends Applet {
             // Add login information to control panel
             JPanel tempPanel = new JPanel();
             tempPanel.setLayout(new GridLayout(5, 4));
-            tempPanel.add(identBlank1 = new JTextField(10));
+            tempPanel.add(hostPortArg = new JTextArea());
             tempPanel.add(autoRunButton = new JButton("Auto Run"));
             autoRunButton.setToolTipText("Start program in automatic mode using selected monitor and login parameters. NOTE: requires no manual interaction.");
             tempPanel.add(monitorBox = new JComboBox());
             monitorBox.addItem("helios.ececs.uc.edu");
             monitorBox.addItem("gauss.ececs.uc.edu");
             monitorBox.addItem("localhost");
-            monitorBox.setSelectedIndex(0);
+            monitorBox.setSelectedIndex(2);
             tempPanel.add(usernameArg = new JTextArea());
             tempPanel.add(new JLabel("Host Port", JLabel.CENTER));
             tempPanel.add(new JLabel("  "));
@@ -104,7 +107,7 @@ public class GameBoard extends Applet {
             tempPanel.add(monitorPortBox = new JComboBox());
             monitorPortBox.addItem("8160");
             monitorPortBox.addItem("8180");
-            tempPanel.add(usernameArg = new JTextArea());
+            tempPanel.add(loginPasswordArg = new JTextArea());
             tempPanel.add(new JLabel("Server", JLabel.CENTER));
             tempPanel.add(new JLabel("Client", JLabel.CENTER));
             tempPanel.add(new JLabel("Monitor Port", JLabel.CENTER));
@@ -215,18 +218,37 @@ public class GameBoard extends Applet {
             clientConnectButton.addActionListener(this);
             clientDisconnectButton.addActionListener(this);
             autoRunButton.addActionListener(this);
+
         }
         
         public void actionPerformed(ActionEvent e) {
             if ( e.getSource() == autoRunButton ) {
                 // TODO: start auto run of program
             } else if ( e.getSource() == serverConnectButton ) {
+                Integer hostPort = Integer.valueOf(hostPortArg.getText());
+                System.out.println(hostPortArg.getText());
+                System.out.println(usernameArg.getText());
+                System.out.println(monitorPortBox.getSelectedItem().toString());
+                System.out.println(loginPasswordArg.getText());
+                if ( server == null ) {
+                    server = new Server(gb, hostPort, hostPort, usernameArg.getText(), loginPasswordArg.getText());
+                }
                 if ( !server.connected ) {
+                    server.start();
+                    server.connected = true;
                     serverConnectButton.setBackground(Color.green);
                     // TODO: server connect?
                 }
             } else if ( e.getSource() == clientConnectButton ) {
+                if ( ac == null ) {
+                    Integer hostPort = Integer.valueOf(hostPortArg.getText());
+                    Integer monitorPort = Integer.valueOf(monitorPortBox.getSelectedItem().toString());
+
+                    ac = new ActiveClient(gb, monitorBox.getSelectedItem().toString(), monitorPort, hostPort, 0, usernameArg.getText(), loginPasswordArg.getText());
+                }
                 if ( !ac.connected ) {
+                    ac.start();
+                    ac.connected = true;
                     clientConnectButton.setBackground(Color.green);
                     // TODO: client connect?
                 }
@@ -289,7 +311,7 @@ public class GameBoard extends Applet {
     }
 
     public void init() {
-        Frame frame = new Frame();
+        Frame frame = new Frame(this);
         frame.setUpControlPanel();
         frame.pack();
         frame.setVisible(true);

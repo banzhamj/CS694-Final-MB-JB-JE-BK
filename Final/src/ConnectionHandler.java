@@ -3,13 +3,17 @@ import java.net.*;
 
 class ConnectionHandler extends MessageParser implements Runnable
 {
+    GameBoard gb;
+    Util logger;
     private Socket incoming;
     private int counter;
     Thread runner;
 
-    public ConnectionHandler (Socket i, int c, String name, String password)
+    public ConnectionHandler (GameBoard gb, Socket i, int c, String name, String password)
     {
         super(name, password);
+        this.gb = gb;
+        logger = new Util(gb.serverLog);
         incoming = i;
         counter = c;
     }
@@ -23,14 +27,14 @@ class ConnectionHandler extends MessageParser implements Runnable
 
             HOST_PORT = Server.LOCAL_PORT;
             CType = 1;  //Indicates Server
-            System.out.println("Starting login from Server..");
+            logger.Print(DbgSub.CONNECTION_HANDLER, "Starting login from Server..");
             if ( Login() )
             {
-                System.out.println("ConnectionHandler [run]: success Logged In!");
+                logger.Print(DbgSub.CONNECTION_HANDLER, "[run]: success Logged In!");
             }
             else
             {
-                System.out.println("Server could not log in.");
+                logger.Print(DbgSub.CONNECTION_HANDLER, "Server could not log in.");
                 if ( IsVerified != 1 )
                 {
                 }

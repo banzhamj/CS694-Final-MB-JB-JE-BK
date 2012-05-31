@@ -52,9 +52,11 @@ public class MessageParser
 
     // Transfer stuff
     String ROUNDS = "20";
+    Util debug;
 
     public MessageParser()
     {
+        debug = new Util(null);
         filename = "passwd.dat";
         storage = new PermanentStorage(this);
         GetIdentification(); // Gets Password and Cookie from 'passwd.dat' file
@@ -62,6 +64,7 @@ public class MessageParser
 
     public MessageParser(String ident, String password)
     {
+        debug = new Util(null);
         filename = ident+".dat";
         storage = new PermanentStorage(this, ident);
         PASSWORD = password;
@@ -91,30 +94,30 @@ public class MessageParser
             temp = "";
 
         } catch (IOException e) {
-                Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: error "
+                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: error "
                                 + "in GetMonitorMessage:\n\t" + e + this);
                 sMesg = "";
                 e.printStackTrace();
         } catch (NullPointerException n) {
                 sMesg = "";
-                Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: NULL POINTER");
+                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: NULL POINTER");
                 n.printStackTrace();
         } catch (NumberFormatException o) {
-                Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: number "
+                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: number "
                                 + "format error:\n\t" + o + this);
                 sMesg = "";
                 o.printStackTrace();
         } catch (NoSuchElementException ne) {
-                Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: no such "
+                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: no such "
                                 + "element exception occurred:\n\t" + this);
                 ne.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException ae) {
-                Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: AIOB "
+                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: AIOB "
                                 + "EXCEPTION!\n\t" + this);
                 sMesg = "";
                 ae.printStackTrace();
         } 
-        Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getMonitorMessage (" + CType + ")]: " + sMesg);
+        debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage (" + CType + ")]: " + sMesg);
         return sMesg;
     }
 
@@ -130,7 +133,7 @@ public class MessageParser
             while (!(temp.trim().equals(sDefault.trim())))
                     temp = t.nextToken();
             temp = t.nextToken();
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[getNextCommand]: " + temp);
+            debug.Print(DbgSub.MESSAGE_PARSER, "[getNextCommand]: " + temp);
             return temp; // returns what the monitor wants
         } catch (NoSuchElementException e) {
             e.printStackTrace();
@@ -171,11 +174,11 @@ public class MessageParser
                     String[] tmp = passwordString.split(" ");
                     //COOKIE = tmp[2];
                     GlobalData.SetCookie(tmp[2]);
-                    Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + tmp[2]);
+                    debug.Print(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + tmp[2]);
                     storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
                 }
                 Execute(GetNextCommand(GetMonitorMessage(), ""));
-                Util.DebugPrint(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
+                debug.Print(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
                 success = true;
             }
             if (CType == 1) {
@@ -186,16 +189,16 @@ public class MessageParser
                 IsVerified = 2;
             }
         } catch (IOException ex) {
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[Login]: IO error "
+            debug.Print(DbgSub.MESSAGE_PARSER, "[Login]: IO error "
                             + "at login:\n\t" + ex);
         } catch (NullPointerException n) {
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "[Login]: null pointer error "
+            debug.Print(DbgSub.MESSAGE_PARSER, "[Login]: null pointer error "
                             + "at login:\n\t" + n);
             success = false;
             n.printStackTrace();
         }
 
-        Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Success Value Login = " + success);
+        debug.Print(DbgSub.MESSAGE_PARSER, "Success Value Login = " + success);
         return success;
     }
 
@@ -215,11 +218,11 @@ public class MessageParser
                 success = true;
             }
         } catch (IOException e) {
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Transfer Request IOError: " + e);
+            debug.Print(DbgSub.MESSAGE_PARSER, "Transfer Request IOError: " + e);
             success = false;
             e.printStackTrace();
         } catch (NullPointerException np) {
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Transfer Request Null Error" + np);
+            debug.Print(DbgSub.MESSAGE_PARSER, "Transfer Request Null Error" + np);
             success = false;
             np.printStackTrace();
         }
@@ -398,10 +401,10 @@ public class MessageParser
                 success = true;
             }
         } catch (IOException e) {
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "IOException: " + e);
+            debug.Print(DbgSub.MESSAGE_PARSER, "IOException: " + e);
             e.printStackTrace();
         } catch (NullPointerException np) {
-            Util.DebugPrint(DbgSub.MESSAGE_PARSER, "Null Pointer Exception: " + np);
+            debug.Print(DbgSub.MESSAGE_PARSER, "Null Pointer Exception: " + np);
             np.printStackTrace();
         }
 

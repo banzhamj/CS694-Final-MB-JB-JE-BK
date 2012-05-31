@@ -1,9 +1,12 @@
 import java.io.*;
 import java.net.*;
+import javax.swing.JTextArea;
 
 public class ActiveClient extends MessageParser implements Runnable
 {
-
+    Util logger;
+    GameBoard gb;
+    JTextArea log;
     public static String MonitorName;
     Thread runner;
     Socket toMonitor = null;
@@ -17,16 +20,20 @@ public class ActiveClient extends MessageParser implements Runnable
     public ActiveClient()
     {
         super("[no-name]", "[no-password]");
+        logger = new Util(null);
         MonitorName="";
         toMonitor = null;
         MONITOR_PORT=0;
         LOCAL_PORT=0;
     }
 
-    public ActiveClient(String mname, int p, int lp, int sm, 
+    public ActiveClient(GameBoard gb, String mname, int p, int lp, int sm,
                         String name, String password)
     {
         super(name, password);
+        this.gb = gb;
+        this.log = gb.clientLog;
+        logger = new Util(log);
         try
         {
             SleepMode = sm;
@@ -36,7 +43,7 @@ public class ActiveClient extends MessageParser implements Runnable
         }
         catch ( NullPointerException n )
         {
-            System.out.println("Active Client [Constructor]: TIMEOUT Error: "+n);
+            logger.Print(DbgSub.ACTIVE_CLIENT, "[Constructor] TIMEOUT Error: "+n);
         }
     }
 
@@ -55,10 +62,10 @@ public class ActiveClient extends MessageParser implements Runnable
         {
             try
             {
-                System.out.print("Active Client: trying monitor: "+MonitorName+
+                logger.Print(DbgSub.ACTIVE_CLIENT, "trying monitor: "+MonitorName+
                                  " port: "+MONITOR_PORT+"...");
                 toMonitor = new Socket(MonitorName, MONITOR_PORT);
-                System.out.println("completed.");
+                logger.Print(DbgSub.ACTIVE_CLIENT, "completed.");
                 plainOut = new PrintWriter(toMonitor.getOutputStream(), true);
                 plainIn = new BufferedReader(new InputStreamReader(toMonitor.getInputStream()));
                 
@@ -72,7 +79,7 @@ public class ActiveClient extends MessageParser implements Runnable
                 {
                     if ( IsVerified == 0 ) System.exit(1);
                 }
-                System.out.println("***************************");
+                logger.Print(DbgSub.ACTIVE_CLIENT, "***************************");
 //                if ( Execute("GET_GAME_IDENTS") )
 //                {
 //                    String msg = GetMonitorMessage();
