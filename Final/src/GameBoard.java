@@ -16,12 +16,6 @@ import javax.swing.JTextField;
 public class GameBoard extends Applet {
 
 	private static final long serialVersionUID = 944417097790033967L;
-	public static String MONITOR_NAME = "helios.ececs.uc.edu";
-    public static int MONITOR_PORT = 8160;
-    public static int HOST_PORT = 20000 +(int)(Math.random()*1000);
-    public static String name = "asdfname";
-    public static String password = "asdfpass";
-
     JButton encryptButton;
     JButton identButton;
     JButton passwordButton;
@@ -108,6 +102,7 @@ public class GameBoard extends Applet {
             tempPanel.add(serverDisconnectButton = new JButton("Disconnect"));
             tempPanel.add(clientDisconnectButton = new JButton("Disconnect"));
             tempPanel.add(monitorPortBox = new JComboBox());
+            monitorPortBox.addItem("8160");
             monitorPortBox.addItem("8180");
             tempPanel.add(usernameArg = new JTextArea());
             tempPanel.add(new JLabel("Server", JLabel.CENTER));
@@ -299,8 +294,5 @@ public class GameBoard extends Applet {
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        ac = new ActiveClient( MONITOR_NAME, MONITOR_PORT, HOST_PORT, 0, name, password );
-        server = new Server( HOST_PORT, HOST_PORT, name, password );
     }
 }
