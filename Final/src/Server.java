@@ -10,6 +10,7 @@ public class Server implements Runnable
     Thread runner;
     String IDENT;
     String PASSWORD;
+    public boolean connected = false;
 
     public Server(int p, int lp, String name, String password)
     {

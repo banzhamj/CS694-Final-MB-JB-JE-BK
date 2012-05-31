@@ -1,5 +1,6 @@
 import java.applet.Applet;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +44,11 @@ public class GameBoard extends Applet {
     JButton tradeRequestButton;
     JButton tradeResponeButton;
     JButton synthesizeButton;
+    JButton serverConnectButton;
+    JButton serverDisconnectButton;
+    JButton clientConnectButton;
+    JButton clientDisconnectButton;
+    JButton autoRunButton;
     JTextField identBlank1;
     JTextField identBlank2;
     JTextField passwordBlank;
@@ -55,6 +61,10 @@ public class GameBoard extends Applet {
     JTextField getCertArg;
     JComboBox truceResponseBox;
     JComboBox tradeResponseBox;
+    JComboBox monitorBox;
+    JComboBox monitorPortBox;
+    JTextArea usernameArg;
+    JTextArea loginPasswdArg;
     JTextArea clientLog;
     JTextArea serverLog;
     JTextField portTextField;
@@ -66,7 +76,7 @@ public class GameBoard extends Applet {
     
     ActiveClient ac;
     Server server;
-
+    
     class Frame extends JFrame implements ActionListener {
 
 		private static final long serialVersionUID = 1264061647495656599L;
@@ -76,11 +86,43 @@ public class GameBoard extends Applet {
         }
 
         void setUpControlPanel() {
+            
+            // Add login information to control panel
             JPanel tempPanel = new JPanel();
+            tempPanel.setLayout(new GridLayout(5, 4));
+            tempPanel.add(identBlank1 = new JTextField(10));
+            tempPanel.add(autoRunButton = new JButton("Auto Run"));
+            autoRunButton.setToolTipText("Start program in automatic mode using selected monitor and login parameters. NOTE: requires no manual interaction.");
+            tempPanel.add(monitorBox = new JComboBox());
+            monitorBox.addItem("helios.ececs.uc.edu");
+            monitorBox.addItem("gauss.ececs.uc.edu");
+            monitorBox.addItem("localhost");
+            monitorBox.setSelectedIndex(1);
+            tempPanel.add(usernameArg = new JTextArea());
+            tempPanel.add(new JLabel("Host Port", JLabel.CENTER));
+            tempPanel.add(new JLabel("  "));
+            tempPanel.add(new JLabel("Monitor Name", JLabel.CENTER));
+            tempPanel.add(new JLabel("User Name", JLabel.CENTER));
+            tempPanel.add(serverConnectButton = new JButton("Connect"));
+            serverConnectButton.setBackground(Color.red);
+            tempPanel.add(clientConnectButton = new JButton("Connect"));
+            clientConnectButton.setBackground(Color.red);
+            tempPanel.add(new JLabel("  "));
+            tempPanel.add(new JLabel("  "));
+            tempPanel.add(serverDisconnectButton = new JButton("Disconnect"));
+            tempPanel.add(clientDisconnectButton = new JButton("Disconnect"));
+            tempPanel.add(monitorPortBox = new JComboBox());
+            monitorPortBox.addItem("8180");
+            tempPanel.add(usernameArg = new JTextArea());
+            tempPanel.add(new JLabel("Server", JLabel.CENTER));
+            tempPanel.add(new JLabel("Client", JLabel.CENTER));
+            tempPanel.add(new JLabel("Monitor Port", JLabel.CENTER));
+            tempPanel.add(new JLabel("Password", JLabel.CENTER));
+            add("North", tempPanel);
+            
+            // Add command components to the control panel
             tempPanel = new JPanel();
             tempPanel.setLayout(new GridLayout(16, 3));
-            
-            // Add all components to the control panel
             tempPanel.add(encryptButton = new JButton("Start Encryption"));
             tempPanel.add(new JLabel("  "));
             tempPanel.add(new JLabel("  "));
@@ -145,25 +187,15 @@ public class GameBoard extends Applet {
             // Add client and server log windows
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(30,40)));
+            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(20,40)));
             tempPanel.add("South", new JLabel("Active Client Log\n\n\n", 0));
             add("West", tempPanel);
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(30,40)));
+            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(20,40)));
             tempPanel.add("South", new JLabel("Passive Server Log\n\n\n", 0));
             add("East", tempPanel);
-            
-            JPanel topPanel = new JPanel();
-            topPanel.setLayout( new GridLayout( 3, 2 ) );
-            topPanel.add( new JLabel( "Host port" ) );
-            topPanel.add( portTextField = new JTextField( "20000" ) );
-            topPanel.add( startServerButton = new JButton( "Start Server" ) );
-            topPanel.add( stopServerButton = new JButton( "Stop Server" ) );
-            topPanel.add( startClientButton = new JButton( "Start Client" ) );
-            topPanel.add( stopClientButton = new JButton( "Stop Client" ) );
-            add("North", topPanel);
-            
+
             // Add action listeners for all buttons
             encryptButton.addActionListener(this);
             identButton.addActionListener(this);
@@ -187,14 +219,37 @@ public class GameBoard extends Applet {
             tradeRequestButton.addActionListener(this);
             tradeResponeButton.addActionListener(this);
             synthesizeButton.addActionListener(this);
-            startServerButton.addActionListener(this);
-            stopServerButton.addActionListener(this);
-            startClientButton.addActionListener(this);
-            stopClientButton.addActionListener(this);
+            serverConnectButton.addActionListener(this);
+            serverDisconnectButton.addActionListener(this);
+            clientConnectButton.addActionListener(this);
+            clientDisconnectButton.addActionListener(this);
+            autoRunButton.addActionListener(this);
         }
         
         public void actionPerformed(ActionEvent e) {
-            if ( e.getSource() == encryptButton ) {
+            if ( e.getSource() == autoRunButton ) {
+                // TODO: start auto run of program
+            } else if ( e.getSource() == serverConnectButton ) {
+                if ( !server.connected ) {
+                    serverConnectButton.setBackground(Color.green);
+                    // TODO: server connect?
+                }
+            } else if ( e.getSource() == clientConnectButton ) {
+                if ( !ac.connected ) {
+                    clientConnectButton.setBackground(Color.green);
+                    // TODO: client connect?
+                }
+            } else if ( e.getSource() == serverDisconnectButton ) {
+                if ( server.connected ) {
+                    serverConnectButton.setBackground(Color.red);
+                    // TODO: server disconnect?
+                }
+            } else if ( e.getSource() == clientDisconnectButton ) {
+                if ( ac.connected ) {
+                    clientConnectButton.setBackground(Color.red);
+                    // TODO: client disconnect?
+                }
+            } else if ( e.getSource() == encryptButton ) {
                 // TODO
             } else if ( e.getSource() == identButton ) {
                 ac.Execute("IDENT");

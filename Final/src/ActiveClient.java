@@ -12,6 +12,7 @@ public class ActiveClient extends MessageParser implements Runnable
     public int SleepMode;
     int DELAY = 90000;  //Interval after which a new Active Client is started 
     long prevTime,present;
+    public boolean connected = false;
 
     public ActiveClient()
     {
