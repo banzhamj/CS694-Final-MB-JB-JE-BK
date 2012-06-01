@@ -237,10 +237,6 @@ public class GameBoard extends Applet {
                     // TODO: start auto run of program
                 } else if ( e.getSource() == serverConnectButton ) {
                     Integer hostPort = Integer.valueOf(hostPortArg.getText());
-                    System.out.println(hostPortArg.getText());
-                    System.out.println(usernameArg.getText());
-                    System.out.println(monitorPortBox.getSelectedItem().toString());
-                    System.out.println(loginPasswordArg.getText());
                     if ( server == null ) {
                         server = new Server(gb, hostPort, hostPort, usernameArg.getText(), loginPasswordArg.getText());
                     }

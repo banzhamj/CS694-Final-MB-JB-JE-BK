@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MessageParser
 {
+    Util debug;
     //Monitor Handling Declarations
     int COMMAND_LIMIT = 25;
     public  int CType;
@@ -49,7 +50,15 @@ public class MessageParser
 
     // Transfer stuff
     String ROUNDS = "20";
-    Util debug;
+
+    //Directives
+    String require;
+    String result;
+    String error;
+    String comment;
+    String ppChecksum;
+
+    String lastCommandSent;
 
     public MessageParser()
     {
@@ -74,21 +83,80 @@ public class MessageParser
         String sMesg="";
         try
         {
-            String temp = in.readLine();
+            String temp;
             sMesg = "";
+            boolean moreDirectives = true;
+            boolean foundRequire = false;
+            boolean foundResult = false;
+            boolean foundError = false;
+            boolean foundPPChecksum = false;
+            boolean foundComment = false;
            
             //After IDENT has been sent-to handle partially encrypted msg group
-            while ( !(temp.trim().equals("WAITING:")) )
-            {                
+            while ( moreDirectives ) {
+                temp = in.readLine();
+                String directive = null;
                 System.out.println("Received: " + temp);
-                
-                if ( temp != null ) {
+
+                if ( temp != null && !temp.equals("\r") ) {
+                    BetterStringTokenizer st = new BetterStringTokenizer(temp);
+                    if ( st.hasMoreTokens() ) {
+                        directive = st.nextToken();
+                        if ( directive.equalsIgnoreCase("WAITING:") ) {
+                            moreDirectives = false;
+                        } else if ( directive.equalsIgnoreCase("REQUIRE:") ) {
+                            require = st.GetRemaining();
+                            if ( require != null && !require.equals("") ) {
+                                foundRequire = true;
+                            }
+                        } else if ( directive.equalsIgnoreCase("RESULT:") ) {
+                            result = st.GetRemaining();
+                            if ( result.equalsIgnoreCase("QUIT") || result.equalsIgnoreCase("SIGN_OFF") ) {
+                                moreDirectives = false;
+                            }
+                            if ( result != null && !result.equals("")) {
+                                foundResult = true;
+                            }
+                        } else if ( directive.equalsIgnoreCase("COMMENT:") ) {
+                            comment = st.GetRemaining();
+                            if ( comment != null && !comment.equals("") ) {
+                                foundComment = true;
+                            }
+                        } else if ( directive.equalsIgnoreCase("PLAYER_PASSWORD_CHECKSUM:") ) {
+                            ppChecksum = st.GetRemaining();
+                            if ( ppChecksum != null && !ppChecksum.equals("") ) {
+                                foundPPChecksum = true;
+                            }
+                        } else if ( directive.equalsIgnoreCase("COMMAND_ERROR:") ) {
+                            error = st.GetRemaining();
+                            if ( error != null && !error.equals("") ) {
+                                foundError = true;
+                            }
+                        } else {
+                            System.out.println("Unknown Directive: " + directive);
+                            moreDirectives = false;
+                        }
+                    }
                     sMesg = sMesg.concat(temp);
                 }
-                temp = in.readLine();
                 sMesg = sMesg.concat("\n");
             } // sMesg now contains the Message Group sent by the Monitor
             temp = "";
+            if ( !foundRequire ) {
+                require = "none";
+            }
+            if ( !foundResult ) {
+                result = "none";
+            }
+            if ( !foundComment ) {
+                comment = "none";
+            }
+            if ( !foundError ) {
+                error = "none";
+            }
+            if ( !foundPPChecksum ) {
+                ppChecksum = "none";
+            }
 
         } catch (IOException e) {
                 debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: error "
@@ -155,51 +223,6 @@ public class MessageParser
         }
         return pc;
     }    
-
-    public boolean Login()
-    {
-        boolean success = false;
-
-        try {
-                        
-            if (CType == 0) {
-                Execute(GetNextCommand(GetMonitorMessage(), ""));
-                Execute(GetNextCommand(GetMonitorMessage(), ""));
-                
-                String passwordString = in.readLine();
-                
-                if (passwordString.contains("PASSWORD")) {
-                    String[] tmp = passwordString.split(" ");
-                    //COOKIE = tmp[2];
-                    GlobalData.SetCookie(tmp[2]);
-                    debug.Print(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + tmp[2]);
-                    storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
-                }
-                Execute(GetNextCommand(GetMonitorMessage(), ""));
-                debug.Print(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
-                success = true;
-            }
-            if (CType == 1) {
-                Execute(GetNextCommand(GetMonitorMessage(), ""));
-                Execute(GetNextCommand(GetMonitorMessage(), ""));
-                Execute(GetNextCommand(GetMonitorMessage(), ""));
-                success = true;
-                IsVerified = 2;
-            }
-        } catch (IOException ex) {
-            debug.Print(DbgSub.MESSAGE_PARSER, "[Login]: IO error "
-                            + "at login:\n\t" + ex);
-            ex.printStackTrace();
-        } catch (NullPointerException n) {
-            debug.Print(DbgSub.MESSAGE_PARSER, "[Login]: null pointer error "
-                            + "at login:\n\t" + n);
-            success = false;
-            n.printStackTrace();
-        }
-
-        debug.Print(DbgSub.MESSAGE_PARSER, "Success Value Login = " + success);
-        return success;
-    }
 
     // Handle Directives and Execute appropriate transfer command
     public boolean Execute(String sentmessage, String to, String amount,
@@ -306,7 +329,7 @@ public class MessageParser
     //Handle Directives and Execute appropriate commands
     public boolean Execute (String command)
     {
-        String sentmessage = command.trim();        
+        String sentmessage = command.trim();
         
         boolean success = false; 
         try
@@ -409,6 +432,10 @@ public class MessageParser
             np.printStackTrace();
         }
 
+        if ( success == true ) {
+            StringTokenizer st = new StringTokenizer(sentmessage);
+            lastCommandSent = st.nextToken();
+        }
         return success;
     }
 

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.StringTokenizer;
 
 class ConnectionHandler extends MessageParser implements Runnable
 {
@@ -16,6 +17,36 @@ class ConnectionHandler extends MessageParser implements Runnable
         logger = new Util(gb.serverLog);
         incoming = i;
         //counter = c;
+    }
+
+    public boolean Login()
+    {
+        GetMonitorMessage();
+        ProcessUntilQuit();
+        return ProcessResult();
+    }
+
+    public void ProcessUntilQuit()
+    {
+        while (!require.equals("none") ) {
+            ProcessResult();
+            Execute(require);
+            GetMonitorMessage();
+        }
+    }
+
+    public boolean ProcessResult()
+    {
+        if ( result.equals("none") ) {
+            return false;
+        }
+        StringTokenizer st = new StringTokenizer(result);
+        if ( st.hasMoreTokens() ) {
+            if ( st.nextToken().equalsIgnoreCase(lastCommandSent) ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void run()

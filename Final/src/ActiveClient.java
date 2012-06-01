@@ -16,6 +16,7 @@ public class ActiveClient extends MessageParser implements Runnable
     int DELAY = 90000;  //Interval after which a new Active Client is started 
     long prevTime,present;
     public boolean connected = false;
+    public boolean running = true;
 
     public ActiveClient()
     {
@@ -58,7 +59,51 @@ public class ActiveClient extends MessageParser implements Runnable
             runner = new Thread(this);
             runner.start();
         }
-    }  
+    }
+
+    public void stop()
+    {
+        running = false;
+    }
+
+    public boolean Login()
+    {
+        try {
+            Execute(GetNextCommand(GetMonitorMessage(), ""));
+            Execute(GetNextCommand(GetMonitorMessage(), ""));
+
+            String passwordString = in.readLine();
+
+            if (passwordString.contains("PASSWORD")) {
+                String[] tmp = passwordString.split(" ");
+                //COOKIE = tmp[2];
+                GlobalData.SetCookie(tmp[2]);
+                debug.Print(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + tmp[2]);
+                storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
+            }
+            Execute(GetNextCommand(GetMonitorMessage(), ""));
+        } catch (IOException e) { return false;}
+        catch (NullPointerException e) { return false;}
+        debug.Print(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
+        return true;
+    }
+
+    public void ProcessResult()
+    {
+        //TODO: case results processing for each type of command we can issue
+        if ( result.equals("none") ) {
+            return;
+        }
+        BetterStringTokenizer st = new BetterStringTokenizer(result);
+        if ( st.hasMoreTokens() ) {
+            String resultCommand = st.nextToken();
+            if ( resultCommand.equalsIgnoreCase(lastCommandSent) ) {
+                if ( lastCommandSent.equalsIgnoreCase("QUIT") || lastCommandSent.equalsIgnoreCase("SIGN_OFF") ) {
+                    running = false;
+                }
+            }
+        }
+    }
 
     public void run()
     {
@@ -82,28 +127,13 @@ public class ActiveClient extends MessageParser implements Runnable
                 if ( IsVerified == 0 ) System.exit(1);
             }
             logger.Print(DbgSub.ACTIVE_CLIENT, "***************************");
-//                if ( Execute("GET_GAME_IDENTS") )
-//                {
-//                    String msg = GetMonitorMessage();
-//                    System.out.println("ActiveClient [GET_GAME_IDENTS]:\n\t"+msg);
-//                }
-//                if ( Execute("RANDOM_PARTICIPANT_HOST_PORT") )
-//                {
-//                    String msg = GetMonitorMessage();
-//                    System.out.println("ActiveClient [RANDOM_PARTICIPANT_HOST_PORT]:\n\t"+msg);
-//                }
-//                if ( Execute("PARTICIPANT_HOST_PORT", "FRANCO") )
-//                {
-//                    String msg = GetMonitorMessage();
-//                    System.out.println("ActiveClient [PARTICIPANT_HOST_PORT]:\n\t"+msg);
-//                }
-//                if ( Execute("PARTICIPANT_STATUS") )
-//                {
-//                    String msg = GetMonitorMessage();
-//                    System.out.println("ActiveClient [PARTICIPANT_STATUS]:\n\t"+msg);
-//                }
-//                ChangePassword(PASSWORD);
-//                System.out.println("Password:"+PASSWORD);
+
+            //TODO: Loop here and wait for commands from GUI
+            while ( running ) {
+                //TODO: run command here
+                GetMonitorMessage();
+                ProcessResult();
+            }
 
             toMonitor.close(); 
             out.close(); 
@@ -124,7 +154,7 @@ public class ActiveClient extends MessageParser implements Runnable
         }
         catch ( UnknownHostException e )
         {
-        	e.printStackTrace();
+            e.printStackTrace();
             if ( gb != null )
             {
                 gb.appGlobalMessage.setText( e.toString() );
