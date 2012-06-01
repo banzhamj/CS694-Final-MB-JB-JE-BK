@@ -121,6 +121,10 @@ public class MessageParser
                             comment = st.GetRemaining();
                             if ( comment != null && !comment.equals("") ) {
                                 foundComment = true;
+                                //Make sure if we get a timeout from the monitor (which only shows up as a comment), we stop trying to get directives
+                                if ( comment.contains("Timeout") ) {
+                                    moreDirectives = false;
+                                }
                             }
                         } else if ( directive.equalsIgnoreCase("PLAYER_PASSWORD_CHECKSUM:") ) {
                             ppChecksum = st.GetRemaining();
