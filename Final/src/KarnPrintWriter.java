@@ -7,7 +7,6 @@
                20-ECES-694 Advanced Topics in Computer Science
 **/
 import java.io.*;
-import java.lang.*;
 import java.math.*;
 import java.security.*;
 
@@ -53,7 +52,6 @@ public class KarnPrintWriter extends PrintWriter {
 
 	/** General encryption function called by all print functions **/
 	public String encrypt(String msg) {
-		String val = "";
 		md.reset();
 		byte s[];
 		byte m[] = new byte[40];
