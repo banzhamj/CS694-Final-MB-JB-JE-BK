@@ -552,14 +552,55 @@ public class MessageParser
     //throws IOException
     public void UpdatePassword(String cmd, String newpassword)
     {
-    	// TODO
-    	
-    	// is this a dup of ChangePassword() above?
+        if ( Execute(cmd) ) {
+            String msg = GetMonitorMessage();
+            String oldPassword = GlobalData.GetPassword();
+            String[] tmp = msg.split(" ");
+            if ( tmp[0].trim().equals("RESULT:") ) {
+                String newCookie = tmp[2];
+                GlobalData.SetCookie(newCookie);
+                GlobalData.SetPassword(newpassword);
+                storage.WritePersonalData(newpassword, newCookie);
+                debug.Print(DbgSub.MESSAGE_PARSER, "[UpdatePassword] Changed password from " + oldPassword + " to " + newpassword);
+            }
+        }
     }
 
     public void GetIdentification()
     {
-    	// TODO
+        boolean pass = false;
+        boolean cook = false;
+
+        try {
+            FileInputStream dataFile = new FileInputStream(IDENT + ".dat");
+
+            DataInputStream dataIn = new DataInputStream(dataFile);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            dataIn));
+            String lineIn;
+
+            while ((lineIn = reader.readLine()) != null) {
+                    if (pass) {
+                            GlobalData.SetPassword(lineIn.trim());
+                            pass = false;
+                    }
+                    if (cook) {
+                            GlobalData.SetCookie(lineIn.trim());
+                            cook = false;
+                    }
+                    if (lineIn.contains("PASSWORD")) {
+                            pass = true;
+                    }
+                    if (lineIn.contains("COOKIE")) {
+                            cook = true;
+                    }
+            }
+            dataFile.close();
+        } catch (Exception e) {
+            debug.Print(DbgSub.MESSAGE_PARSER, "Error: " + e.getMessage());
+        }
+        debug.Print(DbgSub.MESSAGE_PARSER, "Read from file: " + IDENT + ".dat.  Password = "
+                        + GlobalData.GetPassword() + " COOKIE = " + GlobalData.GetCookie());
     }                                      
 
 
