@@ -35,7 +35,7 @@ public class PlayerCertificate implements Serializable {
 
 	/** Load the player certificate by taking the supplied number,
 	  corresponding to the CA-Signed SHA-1 hash of the named player's
-	  public key, also take the actualy Public Key for public posting and,
+	  public key, also take the actual Public Key for public posting and,
       as a String the player's Name. **/
 	public PlayerCertificate(PubRSA clientPubKey, String name,
             BigInteger hash) {
@@ -50,7 +50,7 @@ public class PlayerCertificate implements Serializable {
 		return playerName;
 	}
 	
-	/** Returns the cetrificate itself, as a base32 number string. */
+	/** Returns the certificate itself, as a base32 number string. */
 	public String getCertificate() {
 		return h.toString(32);
 	}
