@@ -224,90 +224,97 @@ public class GameBoard extends Applet {
         }
         
         public void actionPerformed(ActionEvent e) {
-            if ( e.getSource() == autoRunButton ) {
-                // TODO: start auto run of program
-            } else if ( e.getSource() == serverConnectButton ) {
-                Integer hostPort = Integer.valueOf(hostPortArg.getText());
-                System.out.println(hostPortArg.getText());
-                System.out.println(usernameArg.getText());
-                System.out.println(monitorPortBox.getSelectedItem().toString());
-                System.out.println(loginPasswordArg.getText());
-                if ( server == null ) {
-                    server = new Server(gb, hostPort, hostPort, usernameArg.getText(), loginPasswordArg.getText());
-                }
-                if ( !server.connected ) {
-                    server.start();
-                    server.connected = true;
-                    serverConnectButton.setBackground(Color.green);
-                    // TODO: server connect?
-                }
-            } else if ( e.getSource() == clientConnectButton ) {
-                if ( ac == null ) {
+        	try
+        	{
+                if ( e.getSource() == autoRunButton ) {
+                    // TODO: start auto run of program
+                } else if ( e.getSource() == serverConnectButton ) {
                     Integer hostPort = Integer.valueOf(hostPortArg.getText());
-                    Integer monitorPort = Integer.valueOf(monitorPortBox.getSelectedItem().toString());
+                    System.out.println(hostPortArg.getText());
+                    System.out.println(usernameArg.getText());
+                    System.out.println(monitorPortBox.getSelectedItem().toString());
+                    System.out.println(loginPasswordArg.getText());
+                    if ( server == null ) {
+                        server = new Server(gb, hostPort, hostPort, usernameArg.getText(), loginPasswordArg.getText());
+                    }
+                    if ( !server.connected ) {
+                        server.start();
+                        server.connected = true;
+                        serverConnectButton.setBackground(Color.green);
+                        // TODO: server connect?
+                    }
+                } else if ( e.getSource() == clientConnectButton ) {
+                    if ( ac == null ) {
+                        Integer hostPort = Integer.valueOf(hostPortArg.getText());
+                        Integer monitorPort = Integer.valueOf(monitorPortBox.getSelectedItem().toString());
 
-                    ac = new ActiveClient(gb, monitorBox.getSelectedItem().toString(), monitorPort, hostPort, 0, usernameArg.getText(), loginPasswordArg.getText());
+                        ac = new ActiveClient(gb, monitorBox.getSelectedItem().toString(), monitorPort, hostPort, 0, usernameArg.getText(), loginPasswordArg.getText());
+                    }
+                    if ( !ac.connected ) {
+                        ac.start();
+                        ac.connected = true;
+                        clientConnectButton.setBackground(Color.green);
+                        // TODO: client connect?
+                    }
+                } else if ( e.getSource() == serverDisconnectButton ) {
+                    if ( server.connected ) {
+                        serverConnectButton.setBackground(Color.red);
+                        // TODO: server disconnect?
+                    }
+                } else if ( e.getSource() == clientDisconnectButton ) {
+                    if ( ac.connected ) {
+                        clientConnectButton.setBackground(Color.red);
+                        // TODO: client disconnect?
+                    }
+                } else if ( e.getSource() == encryptButton ) {
+                    // TODO
+                } else if ( e.getSource() == identButton ) {
+                    ac.Execute("IDENT");
+                } else if ( e.getSource() == passwordButton ) {
+                    ac.Execute("PASSWORD");
+                } else if ( e.getSource() == hportButton ) {
+                    ac.Execute("HOST_PORT");
+                } else if ( e.getSource() == aliveButton ) {
+                    ac.Execute("ALIVE");
+                } else if ( e.getSource() == gameIdentsButton ) {
+                    ac.Execute( "GET_GAME_IDENTS" );
+                } else if ( e.getSource() == changePasswordButton ) {
+                    ac.ChangePassword(passwordArg.getText());
+                } else if ( e.getSource() == statusButton ) {
+                    ac.Execute( "PLAYER_STATUS" );
+                } else if ( e.getSource() == signOffButton ) {
+                    ac.Execute( "SIGN_OFF" );
+                } else if ( e.getSource() == quitButton ) {
+                    ac.Execute( "QUIT" );
+                } else if ( e.getSource() == makeCertButton ) {
+                    // TODO
+                } else if ( e.getSource() == playerHostPortButton ) {
+                    // TODO
+                } else if ( e.getSource() == randomHostPortButton ) {
+                    ac.Execute( "RANDOM_PLAYER_HOST_PORT" );
+                } else if ( e.getSource() == declareWarButton ) {
+                    // TODO
+                } else if ( e.getSource() == warTruceOfferButton ) {
+                    // TODO
+                } else if ( e.getSource() == warStatusButton ) {
+                    // TODO
+                } else if ( e.getSource() == warTruceResponseButton ) {
+                    ac.Execute("WAR_TRUCE_RESPONSE", truceResponseBox.getSelectedItem().toString());
+                } else if ( e.getSource() == warDefendButton ) {
+                    // TODO
+                } else if ( e.getSource() == getCertButton ) {
+                    ac.Execute("GET_CERTIFICATE", getCertArg.getText());
+                } else if ( e.getSource() == tradeRequestButton ) {
+                    // TODO
+                } else if ( e.getSource() == tradeResponeButton ) {
+                    ac.Execute("TRADE_RESPONSE", tradeResponseBox.getSelectedItem().toString());
+                } else if ( e.getSource() == synthesizeButton ) {
+                    // TODO
                 }
-                if ( !ac.connected ) {
-                    ac.start();
-                    ac.connected = true;
-                    clientConnectButton.setBackground(Color.green);
-                    // TODO: client connect?
-                }
-            } else if ( e.getSource() == serverDisconnectButton ) {
-                if ( server.connected ) {
-                    serverConnectButton.setBackground(Color.red);
-                    // TODO: server disconnect?
-                }
-            } else if ( e.getSource() == clientDisconnectButton ) {
-                if ( ac.connected ) {
-                    clientConnectButton.setBackground(Color.red);
-                    // TODO: client disconnect?
-                }
-            } else if ( e.getSource() == encryptButton ) {
-                // TODO
-            } else if ( e.getSource() == identButton ) {
-                ac.Execute("IDENT");
-            } else if ( e.getSource() == passwordButton ) {
-                ac.Execute("PASSWORD");
-            } else if ( e.getSource() == hportButton ) {
-                ac.Execute("HOST_PORT");
-            } else if ( e.getSource() == aliveButton ) {
-                ac.Execute("ALIVE");
-            } else if ( e.getSource() == gameIdentsButton ) {
-                ac.Execute( "GET_GAME_IDENTS" );
-            } else if ( e.getSource() == changePasswordButton ) {
-                ac.ChangePassword(passwordArg.getText());
-            } else if ( e.getSource() == statusButton ) {
-                ac.Execute( "PLAYER_STATUS" );
-            } else if ( e.getSource() == signOffButton ) {
-                ac.Execute( "SIGN_OFF" );
-            } else if ( e.getSource() == quitButton ) {
-                ac.Execute( "QUIT" );
-            } else if ( e.getSource() == makeCertButton ) {
-                // TODO
-            } else if ( e.getSource() == playerHostPortButton ) {
-                // TODO
-            } else if ( e.getSource() == randomHostPortButton ) {
-                ac.Execute( "RANDOM_PLAYER_HOST_PORT" );
-            } else if ( e.getSource() == declareWarButton ) {
-                // TODO
-            } else if ( e.getSource() == warTruceOfferButton ) {
-                // TODO
-            } else if ( e.getSource() == warStatusButton ) {
-                // TODO
-            } else if ( e.getSource() == warTruceResponseButton ) {
-                ac.Execute("WAR_TRUCE_RESPONSE", truceResponseBox.getSelectedItem().toString());
-            } else if ( e.getSource() == warDefendButton ) {
-                // TODO
-            } else if ( e.getSource() == getCertButton ) {
-                ac.Execute("GET_CERTIFICATE", getCertArg.getText());
-            } else if ( e.getSource() == tradeRequestButton ) {
-                // TODO
-            } else if ( e.getSource() == tradeResponeButton ) {
-                ac.Execute("TRADE_RESPONSE", tradeResponseBox.getSelectedItem().toString());
-            } else if ( e.getSource() == synthesizeButton ) {
-                // TODO
+            }
+            catch ( Exception ex )
+            {
+            	System.out.println( ex.toString() );
             }
         }
     }
