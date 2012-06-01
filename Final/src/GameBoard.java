@@ -182,11 +182,13 @@ public class GameBoard extends Applet {
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
             tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(20,40)));
+            clientLog.setEnabled(false);
             tempPanel.add("South", new JLabel("Active Client Log\n\n\n", 0));
             add("West", tempPanel);
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
             tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(20,40)));
+            serverLog.setEnabled(false);
             tempPanel.add("South", new JLabel("Passive Server Log\n\n\n", 0));
             add("East", tempPanel);
 

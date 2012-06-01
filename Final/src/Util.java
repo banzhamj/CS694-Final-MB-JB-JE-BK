@@ -11,6 +11,7 @@ class Util {
         if ( log != null ) {
             log.append(subsys.toString() + ": " + object);
             log.append("\n");
+            log.setCaretPosition(log.getDocument().getLength()); //autoscroll hack
         } else {
             System.out.println(subsys + ": " + object);
         }
