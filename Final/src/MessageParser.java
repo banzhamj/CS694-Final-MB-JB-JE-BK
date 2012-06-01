@@ -133,7 +133,8 @@ public class MessageParser
             debug.Print(DbgSub.MESSAGE_PARSER, "[getNextCommand]: " + temp);
             return temp; // returns what the monitor wants
         } catch (NoSuchElementException e) {
-            e.printStackTrace();
+            // commenting out following line, it appears legit in some cases
+            //e.printStackTrace();
             return null;
         }
     }
@@ -420,7 +421,8 @@ public class MessageParser
             if (out.checkError() == true)
                     throw (new IOException());
         } catch (IOException e) {
-            e.printStackTrace();
+            // commenting following line out, it's legit for a QUIT command
+            //e.printStackTrace();
         }
     }
 
