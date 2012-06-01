@@ -130,9 +130,11 @@ public class ActiveClient extends MessageParser implements Runnable
 
             //TODO: Loop here and wait for commands from GUI
             while ( running ) {
-                //TODO: run command here
+                //TODO: run commands here
                 GetMonitorMessage();
                 ProcessResult();
+
+                running = false;
             }
 
             toMonitor.close(); 
