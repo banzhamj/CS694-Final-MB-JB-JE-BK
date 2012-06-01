@@ -25,9 +25,8 @@ public class MessageParser
     String mesg,sentmessage;
     String filename;
     StringTokenizer t;
-    String IDENT = "Skipper"; //TODO: change this
-    String PASSWORD = "franco"; //TODO: change this
-//    static String COOKIE ="bkuhn";
+    String IDENT;
+    String PASSWORD;
     String PPCHECKSUM="";
     int HOST_PORT;
     public static int IsVerified;
