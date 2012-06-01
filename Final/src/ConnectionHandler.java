@@ -6,7 +6,7 @@ class ConnectionHandler extends MessageParser implements Runnable
     GameBoard gb;
     Util logger;
     private Socket incoming;
-    private int counter;
+    //private int counter;
     Thread runner;
 
     public ConnectionHandler (GameBoard gb, Socket i, int c, String name, String password)
@@ -15,7 +15,7 @@ class ConnectionHandler extends MessageParser implements Runnable
         this.gb = gb;
         logger = new Util(gb.serverLog);
         incoming = i;
-        counter = c;
+        //counter = c;
     }
 
     public void run()
