@@ -62,28 +62,26 @@ public class ActiveClient extends MessageParser implements Runnable
 
     public void run()
     {
-        while ( Thread.currentThread() == runner )
+        try
         {
-            try
-            {
-                logger.Print(DbgSub.ACTIVE_CLIENT, "trying monitor: "+MonitorName+
-                                 " port: "+MONITOR_PORT+"...");
-                toMonitor = new Socket(MonitorName, MONITOR_PORT);
-                logger.Print(DbgSub.ACTIVE_CLIENT, "completed.");
-                plainOut = new PrintWriter(toMonitor.getOutputStream(), true);
-                plainIn = new BufferedReader(new InputStreamReader(toMonitor.getInputStream()));
-                
-                out = plainOut;
-                in = plainIn;
+            logger.Print(DbgSub.ACTIVE_CLIENT, "trying monitor: "+MonitorName+
+                             " port: "+MONITOR_PORT+"...");
+            toMonitor = new Socket(MonitorName, MONITOR_PORT);
+            logger.Print(DbgSub.ACTIVE_CLIENT, "completed.");
+            plainOut = new PrintWriter(toMonitor.getOutputStream(), true);
+            plainIn = new BufferedReader(new InputStreamReader(toMonitor.getInputStream()));
+            
+            out = plainOut;
+            in = plainIn;
 
-                HOSTNAME = toMonitor.getLocalAddress().getHostName();
-                CType = 0;   //Indicates Client 
-                HOST_PORT = LOCAL_PORT;
-                if ( !Login() )
-                {
-                    if ( IsVerified == 0 ) System.exit(1);
-                }
-                logger.Print(DbgSub.ACTIVE_CLIENT, "***************************");
+            HOSTNAME = toMonitor.getLocalAddress().getHostName();
+            CType = 0;   //Indicates Client 
+            HOST_PORT = LOCAL_PORT;
+            if ( !Login() )
+            {
+                if ( IsVerified == 0 ) System.exit(1);
+            }
+            logger.Print(DbgSub.ACTIVE_CLIENT, "***************************");
 //                if ( Execute("GET_GAME_IDENTS") )
 //                {
 //                    String msg = GetMonitorMessage();
@@ -107,24 +105,14 @@ public class ActiveClient extends MessageParser implements Runnable
 //                ChangePassword(PASSWORD);
 //                System.out.println("Password:"+PASSWORD);
 
-                toMonitor.close(); 
-                out.close(); 
-                in.close();
-                try
-                {
-                    Thread.sleep(DELAY);
-                }
-                catch ( Exception e )
-                {
-                	e.printStackTrace();
-                    if ( gb != null )
-                    {
-                        gb.appGlobalMessage.setText( e.toString() );
-                    }
-                }
-
+            toMonitor.close(); 
+            out.close(); 
+            in.close();
+            try
+            {
+                Thread.sleep(DELAY);
             }
-            catch ( UnknownHostException e )
+            catch ( Exception e )
             {
             	e.printStackTrace();
                 if ( gb != null )
@@ -132,11 +120,39 @@ public class ActiveClient extends MessageParser implements Runnable
                     gb.appGlobalMessage.setText( e.toString() );
                 }
             }
-            catch ( IOException e )
+
+        }
+        catch ( UnknownHostException e )
+        {
+        	e.printStackTrace();
+            if ( gb != null )
+            {
+                gb.appGlobalMessage.setText( e.toString() );
+            }
+        }
+        catch ( IOException e )
+        {
+            try
+            {
+                toMonitor.close();  
+                //toMonitor = new Socket(MonitorName,MONITOR_PORT);
+            }
+            catch ( IOException ioe )
+            {
+            	e.printStackTrace();
+                if ( gb != null )
+                {
+                    gb.appGlobalMessage.setText( ioe.toString() );
+                }
+            }
+            catch ( NullPointerException n )
             {
                 try
                 {
-                    toMonitor.close();  
+                    if ( toMonitor != null )
+                    {
+                        toMonitor.close();
+                    }
                     //toMonitor = new Socket(MonitorName,MONITOR_PORT);
                 }
                 catch ( IOException ioe )
@@ -145,25 +161,6 @@ public class ActiveClient extends MessageParser implements Runnable
                     if ( gb != null )
                     {
                         gb.appGlobalMessage.setText( ioe.toString() );
-                    }
-                }
-                catch ( NullPointerException n )
-                {
-                    try
-                    {
-                        if ( toMonitor != null )
-                        {
-                            toMonitor.close();
-                        }
-                        //toMonitor = new Socket(MonitorName,MONITOR_PORT);
-                    }
-                    catch ( IOException ioe )
-                    {
-                    	e.printStackTrace();
-                        if ( gb != null )
-                        {
-                            gb.appGlobalMessage.setText( ioe.toString() );
-                        }
                     }
                 }
             }
