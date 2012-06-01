@@ -26,7 +26,13 @@ public class Server implements Runnable
             LOCAL_PORT = lp;
         }
         catch ( IOException e )
-        {}
+        {
+            e.printStackTrace();
+            if ( gb != null )
+            {
+                gb.appGlobalMessage.setText( e.toString() );
+            }
+        }
     }
 
     public void start()
@@ -54,6 +60,12 @@ public class Server implements Runnable
         catch ( Exception e )
         {
             logger.Print(DbgSub.SERVER, "[run]: Error in Server: "  + e);
+            e.printStackTrace();
+            if ( gb != null )
+            {
+                gb.appGlobalMessage.setText( e.toString() );
+            }
+
         }
     }
 }

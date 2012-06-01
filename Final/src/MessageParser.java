@@ -147,11 +147,11 @@ public class MessageParser
             CertRemote r = (CertRemote)(Naming.lookup(server));
             pc = r.getCert(ident);
         } catch (NotBoundException ex) {
-            System.out.println("NotBoundException!");
+            ex.printStackTrace();
         } catch (MalformedURLException ex) {
-            System.out.println("MalformedURLException!");
+            ex.printStackTrace();
         } catch (RemoteException ex) {
-            System.out.println("RemoteException!");
+            ex.printStackTrace();
         }
         return pc;
     }    
@@ -189,6 +189,7 @@ public class MessageParser
         } catch (IOException ex) {
             debug.Print(DbgSub.MESSAGE_PARSER, "[Login]: IO error "
                             + "at login:\n\t" + ex);
+            ex.printStackTrace();
         } catch (NullPointerException n) {
             debug.Print(DbgSub.MESSAGE_PARSER, "[Login]: null pointer error "
                             + "at login:\n\t" + n);
@@ -290,11 +291,13 @@ public class MessageParser
         catch ( IOException e )
         {
             System.out.println("IOError:\n\t"+e);
+            e.printStackTrace();
             success = false;
         }
         catch ( NullPointerException n )
         {
             System.out.println("Null Error has occured");
+            n.printStackTrace();
             success=false;
         }
         return success;
@@ -339,7 +342,7 @@ public class MessageParser
                     try {
                         karnOut = new KarnPrintWriter(plainOut, true, sharedSecret);
                     } catch (NoSuchAlgorithmException ex) {
-                        System.out.println("No Such Algorithm Exception!");
+                        ex.printStackTrace();
                     }
                     
                     in = karnIn;

@@ -63,6 +63,7 @@ public class GameBoard extends Applet {
     JTextArea clientLog;
     JTextArea serverLog;
     JTextField portTextField;
+    JLabel appGlobalMessage;
     String result;
     
     ActiveClient ac = null;
@@ -176,7 +177,13 @@ public class GameBoard extends Applet {
             tempPanel.add(truceResponseBox = new JComboBox());
             truceResponseBox.addItem("Accept");
             truceResponseBox.addItem("Decline");
-            add("South", tempPanel);
+            
+            JPanel tempPanel2 = new JPanel();
+            tempPanel2.setLayout(new BorderLayout());
+            tempPanel2.add("Center", tempPanel);
+            tempPanel2.add("South", appGlobalMessage = new JLabel(" "));
+            appGlobalMessage.setForeground(Color.RED);
+            add("South", tempPanel2);
             
             // Add client and server log windows
             tempPanel = new JPanel();
@@ -220,10 +227,10 @@ public class GameBoard extends Applet {
             clientConnectButton.addActionListener(this);
             clientDisconnectButton.addActionListener(this);
             autoRunButton.addActionListener(this);
-
         }
         
         public void actionPerformed(ActionEvent e) {
+            appGlobalMessage.setText( " " );
         	try
         	{
                 if ( e.getSource() == autoRunButton ) {
@@ -314,7 +321,8 @@ public class GameBoard extends Applet {
             }
             catch ( Exception ex )
             {
-            	System.out.println( ex.toString() );
+                ex.printStackTrace();
+                appGlobalMessage.setText( ex.toString() );
             }
         }
     }

@@ -44,6 +44,10 @@ public class ActiveClient extends MessageParser implements Runnable
         catch ( NullPointerException n )
         {
             logger.Print(DbgSub.ACTIVE_CLIENT, "[Constructor] TIMEOUT Error: "+n);
+            if ( gb != null )
+            {
+                gb.appGlobalMessage.setText( "[Constructor] TIMEOUT Error: "+n );
+            }
         }
     }
 
@@ -113,12 +117,20 @@ public class ActiveClient extends MessageParser implements Runnable
                 catch ( Exception e )
                 {
                 	e.printStackTrace();
+                    if ( gb != null )
+                    {
+                        gb.appGlobalMessage.setText( e.toString() );
+                    }
                 }
 
             }
             catch ( UnknownHostException e )
             {
             	e.printStackTrace();
+                if ( gb != null )
+                {
+                    gb.appGlobalMessage.setText( e.toString() );
+                }
             }
             catch ( IOException e )
             {
@@ -130,6 +142,10 @@ public class ActiveClient extends MessageParser implements Runnable
                 catch ( IOException ioe )
                 {
                 	e.printStackTrace();
+                    if ( gb != null )
+                    {
+                        gb.appGlobalMessage.setText( ioe.toString() );
+                    }
                 }
                 catch ( NullPointerException n )
                 {
@@ -144,6 +160,10 @@ public class ActiveClient extends MessageParser implements Runnable
                     catch ( IOException ioe )
                     {
                     	e.printStackTrace();
+                        if ( gb != null )
+                        {
+                            gb.appGlobalMessage.setText( ioe.toString() );
+                        }
                     }
                 }
             }

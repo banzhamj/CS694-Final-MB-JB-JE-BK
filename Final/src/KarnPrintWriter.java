@@ -58,6 +58,7 @@ public class KarnPrintWriter extends PrintWriter {
 		try {
 			s = msg.getBytes("ISO-8859-1"); /* Grab as ASCII values */
 		} catch(UnsupportedEncodingException uex) {
+		    uex.printStackTrace();
 			return null;
 		}
 		byte mLeft[] = new byte[20];

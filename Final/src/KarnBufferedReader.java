@@ -25,6 +25,7 @@ public class KarnBufferedReader extends BufferedReader {
 			md = MessageDigest.getInstance("SHA");
 		} catch(Exception x) {
 			System.out.println("Can't make SHA digests");
+			x.printStackTrace();
 			md = null;
 		}
 	}
@@ -68,6 +69,7 @@ public class KarnBufferedReader extends BufferedReader {
 					result += new String(tmp, "ISO-8859-1");
 				} catch(UnsupportedEncodingException uex) {
 					System.out.println("Bad encoding, you are screwed");
+					uex.printStackTrace();
 					return null;
 				}
 
@@ -81,6 +83,7 @@ public class KarnBufferedReader extends BufferedReader {
 					result += new String(tmp, "ISO-8859-1");
 				} catch(UnsupportedEncodingException uex) {
 					System.out.println("Bad encoding, you are screwed");
+					uex.printStackTrace();
 					return null;
 				}
 				md.reset();

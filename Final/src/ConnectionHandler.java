@@ -44,10 +44,18 @@ class ConnectionHandler extends MessageParser implements Runnable
         catch ( IOException e )
         {
         	e.printStackTrace();
+            if ( gb != null )
+            {
+                gb.appGlobalMessage.setText( e.toString() );
+            }
         }
         catch ( NullPointerException n )
         {
         	n.printStackTrace();
+            if ( gb != null )
+            {
+                gb.appGlobalMessage.setText( n.toString() );
+            }
         }
     }
 
