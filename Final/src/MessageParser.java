@@ -304,31 +304,6 @@ public class MessageParser
                 SendIt(sentmessage);
                 success = true;
             }
-            else if ( sentmessage.trim().equals("QUIT") )
-            {
-                SendIt(sentmessage);
-                success = true;
-            }
-            else if ( sentmessage.trim().equals("SIGN_OFF") )
-            {
-                SendIt(sentmessage);
-                success = true;
-            }
-            else if ( sentmessage.trim().equals("GET_GAME_IDENTS") )
-            {
-                SendIt(sentmessage);
-                success = true;
-            }
-            else if ( sentmessage.trim().equals("PLAYER_STATUS") )
-            {
-                SendIt(sentmessage);
-                success = true;
-            }
-            else if ( sentmessage.trim().equals("RANDOM_PLAYER_HOST_PORT") )
-            {
-                SendIt(sentmessage);
-                success = true;
-            }
             else
             {
                 System.out.println("SENDING: " + sentmessage);
