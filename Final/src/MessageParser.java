@@ -96,7 +96,7 @@ public class MessageParser
             while ( moreDirectives ) {
                 temp = in.readLine();
                 String directive = null;
-                System.out.println("Received: " + temp);
+                System.out.println("Received (" + CType + "): " + temp);
 
                 if ( temp != null && !temp.equals("\r") ) {
                     BetterStringTokenizer st = new BetterStringTokenizer(temp);

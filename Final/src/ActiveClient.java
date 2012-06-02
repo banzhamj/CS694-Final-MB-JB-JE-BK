@@ -135,22 +135,26 @@ public class ActiveClient extends MessageParser implements Runnable
             HOSTNAME = toMonitor.getLocalAddress().getHostName();
             CType = 0;   //Indicates Client 
             HOST_PORT = LOCAL_PORT;
-            if ( !Login() )
-            {
-                if ( IsVerified == 0 ) System.exit(1);
-            }
-            logger.Print(DbgSub.ACTIVE_CLIENT, "***************************");
+//            if ( !Login() )
+//            {
+//                if ( IsVerified == 0 ) System.exit(1);
+//            }
+//            logger.Print(DbgSub.ACTIVE_CLIENT, "***************************");
 
+            //Get the Initial Monitor comment message
+            GetMonitorMessage();
             //TODO: Loop here and wait for commands from GUI
             while ( running ) {
                 //TODO: run commands here
-                //Execute(gb.GetCommand());
-//                GetMonitorMessage();
-//                ProcessResult();
+                Execute(gb.GetCommand(gb.ch.CreateCommand()));
+                 //Execute(gb.GetCommand());
+                GetMonitorMessage();
+                ProcessResult();
             }
 
+            System.out.println("Client shutting down");
             //Disconnect client and update game board
-            this.connected = false;
+            connected = false;
             gb.clientConnectButton.setBackground(Color.red);
             toMonitor.close(); 
             out.close(); 

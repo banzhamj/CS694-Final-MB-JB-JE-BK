@@ -64,11 +64,10 @@ public class GameBoard extends Applet {
     JTextArea serverLog;
     JTextField portTextField;
     JLabel appGlobalMessage;
-    String result;
-    String currentCommand = null;
     
     ActiveClient ac = null;
     Server server = null;
+    CommandHandler ch = null;
     
     class Frame extends JFrame implements ActionListener {
 
@@ -228,6 +227,8 @@ public class GameBoard extends Applet {
             clientConnectButton.addActionListener(this);
             clientDisconnectButton.addActionListener(this);
             autoRunButton.addActionListener(this);
+
+            ch = new CommandHandler();
         }
         
         public void actionPerformed(ActionEvent e) {
@@ -265,7 +266,7 @@ public class GameBoard extends Applet {
                     }
                 } else if ( e.getSource() == clientDisconnectButton ) {
                     if ( ac != null && ac.connected ) {
-                        ac.Execute("QUIT");
+                        ch.SetCommand("QUIT");
                         ac.running = false;
                         ac = null;
                         clientConnectButton.setBackground(Color.red);
@@ -273,29 +274,29 @@ public class GameBoard extends Applet {
                 } else if ( e.getSource() == encryptButton ) {
                     // TODO
                 } else if ( e.getSource() == identButton ) {
-                    ac.Execute("IDENT");
+                    ch.SetCommand("IDENT");
                 } else if ( e.getSource() == passwordButton ) {
-                    ac.Execute("PASSWORD");
+                    ch.SetCommand("PASSWORD");
                 } else if ( e.getSource() == hportButton ) {
-                    ac.Execute("HOST_PORT");
+                    ch.SetCommand("HOST_PORT");
                 } else if ( e.getSource() == aliveButton ) {
-                    ac.Execute("ALIVE");
+                    ch.SetCommand("ALIVE");
                 } else if ( e.getSource() == gameIdentsButton ) {
-                    ac.Execute( "GET_GAME_IDENTS" );
+                    ch.SetCommand("GET_GAME_IDENTS");
                 } else if ( e.getSource() == changePasswordButton ) {
-                    ac.ChangePassword(passwordArg.getText());
+                    //TODO: ac.ChangePassword(passwordArg.getText());
                 } else if ( e.getSource() == statusButton ) {
-                    ac.Execute( "PLAYER_STATUS" );
+                    ch.SetCommand("PLAYER_STATUS");
                 } else if ( e.getSource() == signOffButton ) {
-                    ac.Execute( "SIGN_OFF" );
+                    ch.SetCommand("SIGN_OFF");
                 } else if ( e.getSource() == quitButton ) {
-                    ac.Execute( "QUIT" );
+                    ch.SetCommand("QUIT");
                 } else if ( e.getSource() == makeCertButton ) {
                     // TODO
                 } else if ( e.getSource() == playerHostPortButton ) {
                     // TODO
                 } else if ( e.getSource() == randomHostPortButton ) {
-                    ac.Execute( "RANDOM_PLAYER_HOST_PORT" );
+                    ch.SetCommand("RANDOM_PLAYER_HOST_PORT");
                 } else if ( e.getSource() == declareWarButton ) {
                     // TODO
                 } else if ( e.getSource() == warTruceOfferButton ) {
@@ -303,15 +304,15 @@ public class GameBoard extends Applet {
                 } else if ( e.getSource() == warStatusButton ) {
                     // TODO
                 } else if ( e.getSource() == warTruceResponseButton ) {
-                    ac.Execute("WAR_TRUCE_RESPONSE " + truceResponseBox.getSelectedItem().toString());
+                    //TODO: ac.Execute("WAR_TRUCE_RESPONSE " + truceResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == warDefendButton ) {
                     // TODO
                 } else if ( e.getSource() == getCertButton ) {
-                    ac.Execute("GET_CERTIFICATE " + getCertArg.getText());
+                    //TODO: ac.Execute("GET_CERTIFICATE " + getCertArg.getText());
                 } else if ( e.getSource() == tradeRequestButton ) {
                     // TODO
                 } else if ( e.getSource() == tradeResponeButton ) {
-                    ac.Execute("TRADE_RESPONSE " + tradeResponseBox.getSelectedItem().toString());
+                    //TODO: ac.Execute("TRADE_RESPONSE " + tradeResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == synthesizeButton ) {
                     // TODO
                 }
@@ -324,9 +325,40 @@ public class GameBoard extends Applet {
         }
     }
 
-    public String GetCommand() {
-        
-        return currentCommand;
+    public String GetCommand(String command) {
+        String commandString = "none";
+        if ( command.equals("IDENT") ) {
+            commandString = command + " ";
+        } else if ( command.equals("PASSWORD")) {
+
+        } else if ( command.equals("ALIVE") ) {
+            commandString = command + " " + GlobalData.GetCookie();
+        } else if ( command.equals("HOST_PORT") ) {
+            commandString = command + " ";
+        } else if ( command.equals("MAKE_CERTIFICATE") ) {
+        } else if ( command.equals("QUIT") ) {
+            commandString = command;
+        } else if ( command.equals("PLAYER_STATUS") ) {
+            commandString = command;
+        } else if ( command.equals("SIGN_OFF") ) {
+            commandString = command;
+        } else if ( command.equals("CHANGE_PASSWORD") ) {
+        } else if ( command.equals("GET_CERTIFICATE") ) {
+        } else if ( command.equals("SYNTHESIZE") ) {
+        } else if ( command.equals("TRADE_REQUEST") ) {
+        } else if ( command.equals("TRADE_RESPONSE") ) {
+        } else if ( command.equals("WAR_DECLARE") ) {
+        } else if ( command.equals("WAR_DEFEND") ) {
+        } else if ( command.equals("WAR_TRUCE_OFFER") ) {
+        } else if ( command.equals("WAR_TRUCE_RESPONSE") ) {
+        } else if ( command.equals("WAR_STATUS") ) {
+        } else if ( command.equals("GET_GAME_IDENTS") ) {
+            commandString = command;
+        } else if ( command.equals("RANDOM_PLAYER_HOST_PORT") ) {
+        } else if ( command.equals("PLAYER_STATUS_CRACK") ) {
+        } else if ( command.equals("PLAYER_MONITOR_PASSWORD_CRACK") ) {
+        }
+        return commandString;
     }
 
     public void init() {
