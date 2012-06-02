@@ -231,108 +231,6 @@ public class MessageParser
         return pc;
     }    
 
-    // Handle Directives and Execute appropriate transfer command
-    public boolean Execute(String sentmessage, String to, String amount,
-                    String from) {
-        boolean success = false;
-        try {
-            if (sentmessage.trim().equals("TRANSFER_REQUEST")) {
-                sentmessage = sentmessage.concat(" ");
-                sentmessage = sentmessage.concat(to);
-                sentmessage = sentmessage.concat(" ");
-                sentmessage = sentmessage.concat(amount);
-                sentmessage = sentmessage.concat(" FROM ");
-                sentmessage = sentmessage.concat(from);
-                SendIt(sentmessage);
-                success = true;
-            }
-        } catch (IOException e) {
-            debug.Print(DbgSub.MESSAGE_PARSER, "Transfer Request IOError: " + e);
-            success = false;
-            e.printStackTrace();
-        } catch (NullPointerException np) {
-            debug.Print(DbgSub.MESSAGE_PARSER, "Transfer Request Null Error" + np);
-            success = false;
-            np.printStackTrace();
-        }
-
-        return success;
-    }
-
-    //Handle Directives and Execute appropriate commands with <s>one</s> argument(s)
-    public boolean Execute (String sentmessage, String arg)
-    {
-        boolean success = false;
-        try
-        {
-            // TODO JE:  do we need this for CS694?
-            if ( sentmessage.trim().equals("PARTICIPANT_HOST_PORT") )
-            {
-                sentmessage = sentmessage.concat(" ");
-                sentmessage = sentmessage.concat(arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("SYNTHESIZE") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("GET_CERTIFICATE") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("TRADE_REQUEST") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("TRADE_RESPONSE") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("WAR_DECLARE") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("WAR_DEFEND") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("WAR_TRUCE_OFFER") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("WAR_TRUCE_RESPONSE") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("WAR_STATUS") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("PLAYER_STATUS_CRACK") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            } else if ( sentmessage.trim().equals("PLAYER_MONITOR_PASSWORD_CRACK") ) {
-                sentmessage = sentmessage.concat(" " + arg);
-                SendIt(sentmessage);
-                success = true;
-            }
-        }
-        catch ( IOException e )
-        {
-            System.out.println("IOError:\n\t"+e);
-            e.printStackTrace();
-            success = false;
-        }
-        catch ( NullPointerException n )
-        {
-            System.out.println("Null Error has occured");
-            n.printStackTrace();
-            success=false;
-        }
-        return success;
-    }
-
     //Handle Directives and Execute appropriate commands
     public boolean Execute (String command)
     {
@@ -428,6 +326,12 @@ public class MessageParser
             }
             else if ( sentmessage.trim().equals("RANDOM_PLAYER_HOST_PORT") )
             {
+                SendIt(sentmessage);
+                success = true;
+            }
+            else
+            {
+                System.out.println("SENDING: " + sentmessage);
                 SendIt(sentmessage);
                 success = true;
             }

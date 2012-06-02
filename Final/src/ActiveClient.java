@@ -145,8 +145,8 @@ public class ActiveClient extends MessageParser implements Runnable
             while ( running ) {
                 //TODO: run commands here
                 //Execute(gb.GetCommand());
-                GetMonitorMessage();
-                ProcessResult();
+//                GetMonitorMessage();
+//                ProcessResult();
             }
 
             //Disconnect client and update game board

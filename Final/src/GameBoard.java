@@ -266,8 +266,10 @@ public class GameBoard extends Applet {
                         // TODO: server disconnect?
                     }
                 } else if ( e.getSource() == clientDisconnectButton ) {
-                    if ( ac.connected ) {
+                    if ( ac != null && ac.connected ) {
+                        ac.Execute("QUIT");
                         ac.running = false;
+                        ac = null;
                         clientConnectButton.setBackground(Color.red);
                     }
                 } else if ( e.getSource() == encryptButton ) {
@@ -303,15 +305,15 @@ public class GameBoard extends Applet {
                 } else if ( e.getSource() == warStatusButton ) {
                     // TODO
                 } else if ( e.getSource() == warTruceResponseButton ) {
-                    ac.Execute("WAR_TRUCE_RESPONSE", truceResponseBox.getSelectedItem().toString());
+                    ac.Execute("WAR_TRUCE_RESPONSE " + truceResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == warDefendButton ) {
                     // TODO
                 } else if ( e.getSource() == getCertButton ) {
-                    ac.Execute("GET_CERTIFICATE", getCertArg.getText());
+                    ac.Execute("GET_CERTIFICATE " + getCertArg.getText());
                 } else if ( e.getSource() == tradeRequestButton ) {
                     // TODO
                 } else if ( e.getSource() == tradeResponeButton ) {
-                    ac.Execute("TRADE_RESPONSE", tradeResponseBox.getSelectedItem().toString());
+                    ac.Execute("TRADE_RESPONSE " + tradeResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == synthesizeButton ) {
                     // TODO
                 }
