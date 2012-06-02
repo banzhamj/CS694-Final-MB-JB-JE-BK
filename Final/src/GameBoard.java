@@ -238,14 +238,13 @@ public class GameBoard extends Applet {
                     // TODO: start auto run of program
                 } else if ( e.getSource() == serverConnectButton ) {
                     Integer hostPort = Integer.valueOf(hostPortArg.getText());
-                    if ( server == null ) {
+                    if ( server == null || server.mbServerRunning == false ) {
                         server = new Server(gb, hostPort, hostPort, usernameArg.getText(), loginPasswordArg.getText());
                     }
                     if ( !server.connected ) {
                         server.start();
                         server.connected = true;
                         serverConnectButton.setBackground(Color.green);
-                        // TODO: server connect?
                     }
                 } else if ( e.getSource() == clientConnectButton ) {
                     if ( ac == null ) {
@@ -258,12 +257,11 @@ public class GameBoard extends Applet {
                         ac.start();
                         ac.connected = true;
                         clientConnectButton.setBackground(Color.green);
-                        // TODO: client connect?
                     }
                 } else if ( e.getSource() == serverDisconnectButton ) {
                     if ( server.connected ) {
                         serverConnectButton.setBackground(Color.red);
-                        // TODO: server disconnect?
+                        server.mbServerRunning = false;
                     }
                 } else if ( e.getSource() == clientDisconnectButton ) {
                     if ( ac != null && ac.connected ) {

@@ -327,6 +327,7 @@ public class MessageParser
 
     public void SendIt(String message) throws IOException {
         try {
+            System.out.println("Sending : " + message);
             out.println(message);
             if (out.checkError() == true)
                     throw (new IOException());

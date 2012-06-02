@@ -12,6 +12,7 @@ public class Server implements Runnable
     String IDENT;
     String PASSWORD;
     public boolean connected = false;
+    boolean mbServerRunning = false;
 
     public Server(GameBoard gb, int p, int lp, String name, String password)
     {
@@ -46,16 +47,27 @@ public class Server implements Runnable
 
     public void run()
     {
+        mbServerRunning = true;
+        
         try
         {
             int i = 1;
-            for ( ;; )
+            s.setSoTimeout( 2000 );  // server exit timeout
+            
+            while ( mbServerRunning == true )
             {
-                Socket incoming =  s.accept();
-                new ConnectionHandler(gb, incoming,i,IDENT,PASSWORD).start();
-                //Spawn a new thread for each new connection
-                i++;
-            } 
+                try
+                {
+                    Socket incoming = s.accept();
+                    new ConnectionHandler(gb, incoming,i,IDENT,PASSWORD).start();
+                    //Spawn a new thread for each new connection
+                    i++;
+                }
+                catch ( SocketTimeoutException e )
+                {
+                    // nothing here, just loop around.  this allows us to kill the server.
+                }
+            }
         }
         catch ( Exception e )
         {
@@ -65,8 +77,21 @@ public class Server implements Runnable
             {
                 gb.appGlobalMessage.setText( e.toString() );
             }
-
         }
+        
+        try
+        {
+            s.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        
+        // in case we excepted earlier
+        mbServerRunning = false;
+        
+        gb.appGlobalMessage.setText( "Server exited" );
     }
 }
 
