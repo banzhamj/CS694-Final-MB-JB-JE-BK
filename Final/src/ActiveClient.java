@@ -1,5 +1,7 @@
+import java.awt.Color;
 import java.io.*;
 import java.net.*;
+import java.util.StringTokenizer;
 import javax.swing.JTextArea;
 
 public class ActiveClient extends MessageParser implements Runnable
@@ -91,9 +93,20 @@ public class ActiveClient extends MessageParser implements Runnable
     public void ProcessResult()
     {
         //TODO: case results processing for each type of command we can issue
-        if ( result.equals("none") ) {
+        if ( comment != null && !comment.equals("none") ) {
+            StringTokenizer st = new StringTokenizer(comment);
+            if ( st.hasMoreTokens() ) {
+                if (st.nextToken().equalsIgnoreCase("Timeout") ) {
+                    debug.Print(DbgSub.ACTIVE_CLIENT, "Received a timeout, stopping...");
+                    running = false;
+                    return;
+                }
+            }
+        }
+        if ( result == null || result.equals("none") ) {
             return;
         }
+        
         BetterStringTokenizer st = new BetterStringTokenizer(result);
         if ( st.hasMoreTokens() ) {
             String resultCommand = st.nextToken();
@@ -131,12 +144,14 @@ public class ActiveClient extends MessageParser implements Runnable
             //TODO: Loop here and wait for commands from GUI
             while ( running ) {
                 //TODO: run commands here
+                //Execute(gb.GetCommand());
                 GetMonitorMessage();
                 ProcessResult();
-
-                running = false;
             }
 
+            //Disconnect client and update game board
+            this.connected = false;
+            gb.clientConnectButton.setBackground(Color.red);
             toMonitor.close(); 
             out.close(); 
             in.close();

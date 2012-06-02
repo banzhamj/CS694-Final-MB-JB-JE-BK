@@ -65,6 +65,7 @@ public class GameBoard extends Applet {
     JTextField portTextField;
     JLabel appGlobalMessage;
     String result;
+    String currentCommand = null;
     
     ActiveClient ac = null;
     Server server = null;
@@ -266,8 +267,8 @@ public class GameBoard extends Applet {
                     }
                 } else if ( e.getSource() == clientDisconnectButton ) {
                     if ( ac.connected ) {
+                        ac.running = false;
                         clientConnectButton.setBackground(Color.red);
-                        // TODO: client disconnect?
                     }
                 } else if ( e.getSource() == encryptButton ) {
                     // TODO
@@ -321,6 +322,11 @@ public class GameBoard extends Applet {
                 appGlobalMessage.setText( ex.toString() );
             }
         }
+    }
+
+    public String GetCommand() {
+        
+        return currentCommand;
     }
 
     public void init() {
