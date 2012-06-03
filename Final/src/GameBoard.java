@@ -330,11 +330,11 @@ public class GameBoard extends Applet {
         if ( command.equals("IDENT") ) {
             commandString = command + " ";
         } else if ( command.equals("PASSWORD")) {
-
+            commandString = command + " " + GlobalData.GetPassword();
         } else if ( command.equals("ALIVE") ) {
             commandString = command + " " + GlobalData.GetCookie();
         } else if ( command.equals("HOST_PORT") ) {
-            commandString = command + " ";
+            commandString = command + " " + hportArg1.getText() + " " + hPortArg2.getText();
         } else if ( command.equals("MAKE_CERTIFICATE") ) {
         } else if ( command.equals("QUIT") ) {
             commandString = command;

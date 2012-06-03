@@ -281,22 +281,22 @@ public class MessageParser
                 
                 success = true;
             }
-            else if ( sentmessage.trim().equals("PASSWORD") )
-            {
-                sentmessage = sentmessage.concat(" ");
-                sentmessage = sentmessage.concat(PASSWORD);
-                SendIt(sentmessage.trim());
-                success = true;  
-            }
-            else if ( sentmessage.trim().equals("HOST_PORT") )
-            {
-                sentmessage = sentmessage.concat(" ");
-                sentmessage = sentmessage.concat(HOSTNAME);//hostname
-                sentmessage = sentmessage.concat(" ");
-                sentmessage = sentmessage.concat(String.valueOf(HOST_PORT));
-                SendIt(sentmessage);
-                success = true;                                  
-            }
+//            else if ( sentmessage.trim().equals("PASSWORD") )
+//            {
+//                sentmessage = sentmessage.concat(" ");
+//                sentmessage = sentmessage.concat(PASSWORD);
+//                SendIt(sentmessage.trim());
+//                success = true;
+//            }
+//            else if ( sentmessage.trim().equals("HOST_PORT") )
+//            {
+//                sentmessage = sentmessage.concat(" ");
+//                sentmessage = sentmessage.concat(HOSTNAME);//hostname
+//                sentmessage = sentmessage.concat(" ");
+//                sentmessage = sentmessage.concat(String.valueOf(HOST_PORT));
+//                SendIt(sentmessage);
+//                success = true;
+//            }
             else if ( sentmessage.trim().equals("ALIVE") )
             {
                 sentmessage = sentmessage.concat(" ");
