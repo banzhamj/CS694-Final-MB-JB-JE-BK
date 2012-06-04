@@ -19,7 +19,7 @@ public class GameBoard extends Applet {
     JButton encryptButton;
     JButton identButton;
     JButton passwordButton;
-    JButton hportButton;
+    JButton hPortButton;
     JButton aliveButton;
     JButton gameIdentsButton;
     JButton changePasswordButton;
@@ -46,7 +46,7 @@ public class GameBoard extends Applet {
     JTextField identBlank1;
     JTextField identBlank2;
     JTextField passwordBlank;
-    JTextField hportArg1;
+    JTextField hPortArg1;
     JTextField hPortArg2;
     JTextField certBlank1;
     JTextField certBlank2;
@@ -130,10 +130,10 @@ public class GameBoard extends Applet {
             tempPanel.add(passwordBlank = new JTextField(15));
             passwordBlank.setEditable(false);
             tempPanel.add(statusButton = new JButton("PLAYER_STATUS"));
-            tempPanel.add(hportButton = new JButton("HOST_PORT"));
-            tempPanel.add(hportArg1 = new JTextField(15));
+            tempPanel.add(hPortButton = new JButton("HOST_PORT"));
+            tempPanel.add(hPortArg1 = new JTextField(15));
             tempPanel.add(hPortArg2 = new JTextField(15));
-            hportArg1.setEditable(true);
+            hPortArg1.setEditable(true);
             hPortArg2.setEditable(true);
             tempPanel.add(changePasswordButton = new JButton("CHANGE_PASSWORD"));
             tempPanel.add(passwordArg = new JTextField(15));
@@ -203,7 +203,7 @@ public class GameBoard extends Applet {
             encryptButton.addActionListener(this);
             identButton.addActionListener(this);
             passwordButton.addActionListener(this);
-            hportButton.addActionListener(this);
+            hPortButton.addActionListener(this);
             aliveButton.addActionListener(this);
             gameIdentsButton.addActionListener(this);
             changePasswordButton.addActionListener(this);
@@ -239,8 +239,10 @@ public class GameBoard extends Applet {
                     // TODO: start auto run of program
                 } else if ( e.getSource() == serverConnectButton ) {
                     Integer hostPort = Integer.valueOf(hostPortArg.getText());
+                    Integer monitorPort = Integer.valueOf(monitorPortBox.getSelectedItem().toString());
                     if ( server == null || server.mbServerRunning == false ) {
-                        server = new Server(gb, hostPort, hostPort, usernameArg.getText(), loginPasswordArg.getText());
+                        System.out.println("Starting server: " + monitorPort + " <-> " + hostPort);
+                        server = new Server(gb, monitorPort, hostPort, usernameArg.getText(), loginPasswordArg.getText());
                     }
                     if ( !server.connected ) {
                         server.start();
@@ -277,7 +279,11 @@ public class GameBoard extends Applet {
                     ch.SetCommand("IDENT");
                 } else if ( e.getSource() == passwordButton ) {
                     ch.SetCommand("PASSWORD");
-                } else if ( e.getSource() == hportButton ) {
+                    if ( GlobalData.GetPassword() == null ) {
+                        GlobalData.SetPassword(loginPasswordArg.getText());
+                    }
+                    passwordBlank.setText(GlobalData.GetPassword());
+                } else if ( e.getSource() == hPortButton ) {
                     ch.SetCommand("HOST_PORT");
                 } else if ( e.getSource() == aliveButton ) {
                     ch.SetCommand("ALIVE");
@@ -334,7 +340,7 @@ public class GameBoard extends Applet {
         } else if ( command.equals("ALIVE") ) {
             commandString = command + " " + GlobalData.GetCookie();
         } else if ( command.equals("HOST_PORT") ) {
-            commandString = command + " " + hportArg1.getText() + " " + hPortArg2.getText();
+            commandString = command + " " + hPortArg1.getText() + " " + hPortArg2.getText();
         } else if ( command.equals("MAKE_CERTIFICATE") ) {
         } else if ( command.equals("QUIT") ) {
             commandString = command;

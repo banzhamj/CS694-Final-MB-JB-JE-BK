@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 public class MessageParser
 {
     Util debug;
+    Util logger;
+    DbgSub parentSub;
     //Monitor Handling Declarations
     int COMMAND_LIMIT = 25;
     public  int CType;
@@ -96,7 +98,7 @@ public class MessageParser
             while ( moreDirectives ) {
                 temp = in.readLine();
                 String directive = null;
-                System.out.println("Received (" + CType + "): " + temp);
+                debug.Print(parentSub, "Received " + temp);
 
                 if ( temp != null && !temp.equals("\r") ) {
                     BetterStringTokenizer st = new BetterStringTokenizer(temp);
@@ -107,6 +109,7 @@ public class MessageParser
                         } else if ( directive.equalsIgnoreCase("REQUIRE:") ) {
                             require = st.GetRemaining();
                             if ( require != null && !require.equals("") ) {
+                                logger.Print(parentSub, "REQUIRE: " + require);
                                 foundRequire = true;
                             }
                         } else if ( directive.equalsIgnoreCase("RESULT:") ) {
@@ -115,6 +118,7 @@ public class MessageParser
                                 moreDirectives = false;
                             }
                             if ( result != null && !result.equals("")) {
+                                logger.Print(parentSub, "RESULT: " + result);
                                 foundResult = true;
                             }
                         } else if ( directive.equalsIgnoreCase("COMMENT:") ) {
@@ -122,6 +126,7 @@ public class MessageParser
                             if ( comment != null && !comment.equals("") ) {
                                 StringTokenizer commentTokens = new StringTokenizer(comment);
                                 foundComment = true;
+                                logger.Print(parentSub, "COMMENT: " + comment);
                                 //Make sure if we get a timeout from the monitor (which only shows up as a comment), we stop trying to get directives
                                 if ( commentTokens.hasMoreTokens() ) {
                                     if ( commentTokens.nextToken().equalsIgnoreCase("Timeout") ) {
@@ -132,11 +137,13 @@ public class MessageParser
                         } else if ( directive.equalsIgnoreCase("PLAYER_PASSWORD_CHECKSUM:") ) {
                             ppChecksum = st.GetRemaining();
                             if ( ppChecksum != null && !ppChecksum.equals("") ) {
+                                logger.Print(parentSub, "PLAYER_PASSWORD_CHECKSUM: " + ppChecksum);
                                 foundPPChecksum = true;
                             }
                         } else if ( directive.equalsIgnoreCase("COMMAND_ERROR:") ) {
                             error = st.GetRemaining();
                             if ( error != null && !error.equals("") ) {
+                                logger.Print(parentSub, "COMMAND_ERROR: " + error);
                                 foundError = true;
                             }
                         } else {
@@ -166,30 +173,30 @@ public class MessageParser
             }
 
         } catch (IOException e) {
-                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: error "
+                debug.Print(parentSub, "[getMonitorMessage]: error "
                                 + "in GetMonitorMessage:\n\t" + e + this);
                 sMesg = "";
                 e.printStackTrace();
         } catch (NullPointerException n) {
                 sMesg = "";
-                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: NULL POINTER");
+                debug.Print(parentSub, "[getMonitorMessage]: NULL POINTER");
                 n.printStackTrace();
         } catch (NumberFormatException o) {
-                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: number "
+                debug.Print(parentSub, "[getMonitorMessage]: number "
                                 + "format error:\n\t" + o + this);
                 sMesg = "";
                 o.printStackTrace();
         } catch (NoSuchElementException ne) {
-                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: no such "
+                debug.Print(parentSub, "[getMonitorMessage]: no such "
                                 + "element exception occurred:\n\t" + this);
                 ne.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException ae) {
-                debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage]: AIOB "
+                debug.Print(parentSub, "[getMonitorMessage]: AIOB "
                                 + "EXCEPTION!\n\t" + this);
                 sMesg = "";
                 ae.printStackTrace();
         } 
-        debug.Print(DbgSub.MESSAGE_PARSER, "[getMonitorMessage (" + CType + ")]: " + sMesg);
+        debug.Print(parentSub, "[getMonitorMessage (" + CType + ")]: " + sMesg);
         return sMesg;
     }
 
@@ -205,7 +212,7 @@ public class MessageParser
             while (!(temp.trim().equals(sDefault.trim())))
                     temp = t.nextToken();
             temp = t.nextToken();
-            debug.Print(DbgSub.MESSAGE_PARSER, "[getNextCommand]: " + temp);
+            debug.Print(parentSub, "[getNextCommand]: " + temp);
             return temp; // returns what the monitor wants
         } catch (NoSuchElementException e) {
             // commenting out following line, it appears legit in some cases
@@ -311,10 +318,10 @@ public class MessageParser
                 success = true;
             }
         } catch (IOException e) {
-            debug.Print(DbgSub.MESSAGE_PARSER, "IOException: " + e);
+            debug.Print(parentSub, "IOException: " + e);
             e.printStackTrace();
         } catch (NullPointerException np) {
-            debug.Print(DbgSub.MESSAGE_PARSER, "Null Pointer Exception: " + np);
+            debug.Print(parentSub, "Null Pointer Exception: " + np);
             np.printStackTrace();
         }
 
@@ -453,6 +460,7 @@ public class MessageParser
     {
         boolean pass = false;
         boolean cook = false;
+        boolean success = false;
 
         try {
             FileInputStream dataFile = new FileInputStream(IDENT + ".dat");
@@ -479,8 +487,10 @@ public class MessageParser
                     }
             }
             dataFile.close();
+            success = true;
         } catch (Exception e) {
             debug.Print(DbgSub.MESSAGE_PARSER, "Error: " + e.getMessage());
+
         }
         debug.Print(DbgSub.MESSAGE_PARSER, "Read from file: " + IDENT + ".dat.  Password = "
                         + GlobalData.GetPassword() + " COOKIE = " + GlobalData.GetCookie());

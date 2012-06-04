@@ -22,9 +22,10 @@ public class Server implements Runnable
         PASSWORD = password;
         try
         {
-            s = new ServerSocket(p);
+            s = new ServerSocket(lp);
             MONITOR_PORT = p;
             LOCAL_PORT = lp;
+            gb.hPortArg2.setText(Integer.toString(LOCAL_PORT));
         }
         catch ( IOException e )
         {

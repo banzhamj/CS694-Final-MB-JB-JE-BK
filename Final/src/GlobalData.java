@@ -7,6 +7,7 @@ public class GlobalData {
 	}
 	public static synchronized void SetPassword(String pass) {
 		password = pass;
+                System.out.println("Set password: " + password);
 	}
 
 	public static synchronized String GetCookie() {
@@ -14,5 +15,6 @@ public class GlobalData {
 	}
 	public static synchronized void SetCookie(String pass) {
 		cookie = pass;
+                System.out.println("Set Cookie: " + cookie);
 	}
 }

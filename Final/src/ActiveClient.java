@@ -6,7 +6,6 @@ import javax.swing.JTextArea;
 
 public class ActiveClient extends MessageParser implements Runnable
 {
-    Util logger;
     GameBoard gb;
     JTextArea log;
     public static String MonitorName;
@@ -24,6 +23,7 @@ public class ActiveClient extends MessageParser implements Runnable
     {
         super("[no-name]", "[no-password]");
         logger = new Util(null);
+        parentSub = DbgSub.ACTIVE_CLIENT;
         MonitorName="";
         toMonitor = null;
         MONITOR_PORT=0;
@@ -37,6 +37,7 @@ public class ActiveClient extends MessageParser implements Runnable
         this.gb = gb;
         this.log = gb.clientLog;
         logger = new Util(log);
+        parentSub = DbgSub.ACTIVE_CLIENT;
         try
         {
             SleepMode = sm;
@@ -113,6 +114,11 @@ public class ActiveClient extends MessageParser implements Runnable
             if ( resultCommand.equalsIgnoreCase(lastCommandSent) ) {
                 if ( lastCommandSent.equalsIgnoreCase("QUIT") || lastCommandSent.equalsIgnoreCase("SIGN_OFF") ) {
                     running = false;
+                } else if ( lastCommandSent.equalsIgnoreCase("PASSWORD") ) {
+                    if ( GlobalData.GetCookie() == null ) {
+                    GlobalData.SetCookie(st.nextToken());
+                    }
+                    storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
                 }
             }
         }
@@ -149,7 +155,15 @@ public class ActiveClient extends MessageParser implements Runnable
                 Execute(gb.GetCommand(gb.ch.CreateCommand()));
                  //Execute(gb.GetCommand());
                 GetMonitorMessage();
+                if ( require != null && !require.equals("none") ) {
+                    debug.Print(DbgSub.ACTIVE_CLIENT, "REQUIRE: " + require);
+                }
                 ProcessResult();
+                //Update the GUI with password, hostport, etc.
+                if ( GlobalData.GetPassword() != null ) {
+                    gb.passwordBlank.setText(GlobalData.GetPassword());
+                    gb.loginPasswordArg.setText(GlobalData.GetPassword());
+                }
             }
 
             System.out.println("Client shutting down");

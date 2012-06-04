@@ -5,7 +5,6 @@ import java.util.StringTokenizer;
 class ConnectionHandler extends MessageParser implements Runnable
 {
     GameBoard gb;
-    Util logger;
     private Socket incoming;
     //private int counter;
     Thread runner;
@@ -15,6 +14,7 @@ class ConnectionHandler extends MessageParser implements Runnable
         super(name, password);
         this.gb = gb;
         logger = new Util(gb.serverLog);
+        parentSub = DbgSub.CONNECTION_HANDLER;
         incoming = i;
         //counter = c;
     }
@@ -55,7 +55,6 @@ class ConnectionHandler extends MessageParser implements Runnable
         {
             in = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
             out = new PrintWriter(incoming.getOutputStream(),true);
-
             HOST_PORT = Server.LOCAL_PORT;
             CType = 1;  //Indicates Server
             logger.Print(DbgSub.CONNECTION_HANDLER, "Starting login from Server..");

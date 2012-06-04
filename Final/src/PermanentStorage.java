@@ -28,14 +28,13 @@ public class PermanentStorage {
         {
             pout = new PrintWriter(new FileWriter(filename));
             if ( pout == null ) {
-                System.out.println("oh shit");
                 return false;
             }
+            pout.println("PASSWORD");
             if ( (Passwd != null) && !(Passwd.equals("")) )
             {
                 pout.println(Passwd); //(PASSWORD);
             }
-            pout.println("PASSWORD");
             if ( (Cookie != null) && !(Cookie.equals("")) )
             {
                 pout.println("COOKIE");
@@ -58,6 +57,7 @@ public class PermanentStorage {
         {
         	n.printStackTrace();
         }
+        System.out.println("Wrote dat file: " + Passwd + " " + Cookie);
         return success;
     }
 
