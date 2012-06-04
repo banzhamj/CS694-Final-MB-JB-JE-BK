@@ -33,7 +33,7 @@ public class PermanentStorage {
             pout.println("PASSWORD");
             if ( (Passwd != null) && !(Passwd.equals("")) )
             {
-                pout.println(Passwd); //(PASSWORD);
+                pout.println(Passwd);
             }
             if ( (Cookie != null) && !(Cookie.equals("")) )
             {

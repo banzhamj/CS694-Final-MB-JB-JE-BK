@@ -333,11 +333,14 @@ public class GameBoard extends Applet {
 
     public String GetCommand(String command) {
         String commandString = "none";
+        //TODO: finish all these commands.
         if ( command.equals("IDENT") ) {
+            //TODO: Pull out special case stuff for the IDENT command from Execute() (in MessageParser.java) and put it here
             commandString = command + " ";
         } else if ( command.equals("PASSWORD")) {
             commandString = command + " " + GlobalData.GetPassword();
         } else if ( command.equals("ALIVE") ) {
+            System.out.println("About to send: " + GlobalData.GetCookie());
             commandString = command + " " + GlobalData.GetCookie();
         } else if ( command.equals("HOST_PORT") ) {
             commandString = command + " " + hPortArg1.getText() + " " + hPortArg2.getText();

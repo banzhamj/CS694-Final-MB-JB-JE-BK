@@ -22,6 +22,7 @@ class ConnectionHandler extends MessageParser implements Runnable
     public boolean Login()
     {
         GetMonitorMessage();
+
         ProcessUntilQuit();
         return ProcessResult();
     }
@@ -30,7 +31,11 @@ class ConnectionHandler extends MessageParser implements Runnable
     {
         while (!require.equals("none") ) {
             ProcessResult();
-            Execute(require);
+            if ( require.equalsIgnoreCase("ALIVE") ) {
+                Execute(require + " " + GlobalData.GetCookie());
+            } else {
+                Execute(require);
+            }
             GetMonitorMessage();
         }
     }
