@@ -43,6 +43,8 @@ public class GameBoard extends Applet {
     JButton clientConnectButton;
     JButton clientDisconnectButton;
     JButton autoRunButton;
+    JButton statusCrack;
+    JButton passwordCrack;
     JTextField identBlank1;
     JTextField identBlank2;
     JTextField passwordBlank;
@@ -53,10 +55,20 @@ public class GameBoard extends Applet {
     JTextField passwordArg;
     JTextField playerHostPortArg;
     JTextField getCertArg;
+    JTextField synthesizeAmountArg;
+    JTextField tradeRequestArg;
+    JTextField statusCrackIDArg;
+    JTextField statusCrackResourcesArg;
+    JTextField passwordCrackIDArg;
+    JTextField passwordCrackResourcesArg;
+    JTextField declareWarArg;
+    JTextField warDefendWeaponsArg;
+    JTextField warDefendVehiclesArg;
     JComboBox truceResponseBox;
     JComboBox tradeResponseBox;
     JComboBox monitorBox;
     JComboBox monitorPortBox;
+    JComboBox synthesizeResourceBox;
     JTextArea hostPortArg;
     JTextArea usernameArg;
     JTextArea loginPasswordArg;
@@ -73,6 +85,7 @@ public class GameBoard extends Applet {
 
         GameBoard gb;
         private static final long serialVersionUID = 1264061647495656599L;
+        
 
         Frame(GameBoard gb) {
             this.gb = gb;
@@ -117,10 +130,10 @@ public class GameBoard extends Applet {
             
             // Add command components to the control panel
             tempPanel = new JPanel();
-            tempPanel.setLayout(new GridLayout(16, 3));
-            tempPanel.add(encryptButton = new JButton("Start Encryption"));
-            tempPanel.add(new JLabel("  "));
-            tempPanel.add(new JLabel("  "));
+            tempPanel.setLayout(new GridLayout(20, 3));
+            //tempPanel.add(encryptButton = new JButton("Start Encryption"));
+            //tempPanel.add(new JLabel("  "));
+            //tempPanel.add(new JLabel("  "));
             tempPanel.add(identButton = new JButton("IDENT"));
             tempPanel.add(identBlank1 = new JTextField(15));
             identBlank1.setEditable(false);
@@ -144,17 +157,20 @@ public class GameBoard extends Applet {
             tempPanel.add(new JLabel("  "));
             tempPanel.add(new JLabel("  "));
             tempPanel.add(new JLabel("  "));
-            tempPanel.add(new JLabel("  "));
-            tempPanel.add(new JLabel("  "));
-            tempPanel.add(new JLabel("  "));
+            tempPanel.add(synthesizeButton = new JButton("SYNTHESIZE"));
+            tempPanel.add(synthesizeResourceBox = new JComboBox());
+            synthesizeResourceBox.addItem("WEAPONS");
+            synthesizeResourceBox.addItem("COMPUTERS");
+            synthesizeResourceBox.addItem("VEHICLES");
+            tempPanel.add(synthesizeAmountArg = new JTextField(15));
+            synthesizeAmountArg.setToolTipText("Amount of resource to synthesize");
             tempPanel.add(getCertButton = new JButton("GET_CERTIFICATE"));
             tempPanel.add(getCertArg = new JTextField(15));
-            tempPanel.add(synthesizeButton = new JButton("SYNTHESIZE"));
             tempPanel.add(makeCertButton = new JButton("MAKE_CERTIFICATE"));
-            tempPanel.add(certBlank1 = new JTextField(15));
-            tempPanel.add(certBlank2 = new JTextField(15));
-            certBlank1.setEditable(false);
-            certBlank2.setEditable(false);
+            //tempPanel.add(certBlank1 = new JTextField(15));
+            //tempPanel.add(certBlank2 = new JTextField(15));
+            //certBlank1.setEditable(false);
+            //certBlank2.setEditable(false);
             tempPanel.add(playerHostPortButton = new JButton("PLAYER_HOST_PORT"));
             tempPanel.add(playerHostPortArg = new JTextField(15));
             tempPanel.add(randomHostPortButton = new JButton("RANDOM_PLAYER_HOST_PORT"));
@@ -162,6 +178,9 @@ public class GameBoard extends Applet {
             tempPanel.add(new JLabel("  "));
             tempPanel.add(new JLabel("  "));
             tempPanel.add(tradeRequestButton = new JButton("TRADE_REQUEST"));
+            tempPanel.add(tradeRequestArg = new JTextField(15));
+            tempPanel.add(new JLabel("  "));
+            tradeRequestArg.setToolTipText("Format: <resource_to> <resource_to_amount> for <Player 2> <resource_from> <resource_from_amount>");
             tempPanel.add(tradeResponeButton = new JButton("TRADE_RESPONSE"));
             tempPanel.add(tradeResponseBox = new JComboBox());
             tradeResponseBox.addItem("Accept");
@@ -169,14 +188,40 @@ public class GameBoard extends Applet {
             tempPanel.add(new JLabel("  "));
             tempPanel.add(new JLabel("  "));
             tempPanel.add(new JLabel("  "));
+            tempPanel.add(new JLabel("  "));
             tempPanel.add(declareWarButton = new JButton("WAR_DECLARE"));
-            tempPanel.add(warDefendButton = new JButton("WAR_DEFEND"));
+            tempPanel.add(declareWarArg = new JTextField(15));
+            declareWarArg.setToolTipText("<Player to wage war against> <Enemy Hostname> <Enemy Port> <No. Weapons to Commit> <No. Vehicles to Commit>");
             tempPanel.add(warStatusButton = new JButton("WAR_STATUS"));
+            warStatusButton.setToolTipText("Get status of current war");
+            tempPanel.add(warDefendButton = new JButton("WAR_DEFEND"));
+            tempPanel.add(warDefendWeaponsArg = new JTextField(15));
+            tempPanel.add(warDefendVehiclesArg = new JTextField(15));
+            warDefendWeaponsArg.setToolTipText("Number of Weapons to commit");
+            warDefendVehiclesArg.setToolTipText("Number of Vehicles to commit");
+            
             tempPanel.add(warTruceOfferButton = new JButton("WAR_TRUCE_OFFER"));
+            tempPanel.add(warDefendWeaponsArg = new JTextField(15));
+            warDefendWeaponsArg.setToolTipText("<Player 1> to <Player 2> <resource 1> <resource 1 amount> ...");
+            tempPanel.add(new JLabel("  "));
             tempPanel.add(warTruceResponseButton = new JButton("WAR_TRUCE_RESPONSE"));
             tempPanel.add(truceResponseBox = new JComboBox());
             truceResponseBox.addItem("Accept");
             truceResponseBox.addItem("Decline");
+            tempPanel.add(new JLabel("  "));
+            tempPanel.add(new JLabel("  "));
+            tempPanel.add(new JLabel("  "));
+            tempPanel.add(new JLabel("  "));
+            tempPanel.add(statusCrack = new JButton("Player Status Crack"));
+            tempPanel.add(statusCrackIDArg = new JTextField(15));
+            tempPanel.add(statusCrackResourcesArg = new JTextField(15));
+            statusCrackIDArg.setToolTipText("Player ID");
+            statusCrackResourcesArg.setToolTipText("Number of computer resources to commit (will not get resources back no matter status of crack)");
+            tempPanel.add(passwordCrack = new JButton("Player Monitor Password Crack"));
+            tempPanel.add(passwordCrackIDArg = new JTextField(15));
+            tempPanel.add(passwordCrackResourcesArg = new JTextField(15));
+            passwordCrackIDArg.setToolTipText("Player ID");
+            passwordCrackResourcesArg.setToolTipText("Number of computer resources to commit (will not get resources back no matter status of crack)");
             
             JPanel tempPanel2 = new JPanel();
             tempPanel2.setLayout(new BorderLayout());
@@ -188,19 +233,19 @@ public class GameBoard extends Applet {
             // Add client and server log windows
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(20,40)));
+            tempPanel.add("Center", new JScrollPane(clientLog = new JTextArea(18,40)));
             clientLog.setEnabled(false);
             tempPanel.add("South", new JLabel("Active Client Log\n\n\n", 0));
             add("West", tempPanel);
             tempPanel = new JPanel();
             tempPanel.setLayout(new BorderLayout());
-            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(20,40)));
+            tempPanel.add("Center", new JScrollPane(serverLog = new JTextArea(18,40)));
             serverLog.setEnabled(false);
             tempPanel.add("South", new JLabel("Passive Server Log\n\n\n", 0));
             add("East", tempPanel);
 
             // Add action listeners for all buttons
-            encryptButton.addActionListener(this);
+            //encryptButton.addActionListener(this);
             identButton.addActionListener(this);
             passwordButton.addActionListener(this);
             hPortButton.addActionListener(this);
@@ -227,6 +272,8 @@ public class GameBoard extends Applet {
             clientConnectButton.addActionListener(this);
             clientDisconnectButton.addActionListener(this);
             autoRunButton.addActionListener(this);
+            statusCrack.addActionListener(this);
+            passwordCrack.addActionListener(this);
 
             ch = new CommandHandler();
         }
