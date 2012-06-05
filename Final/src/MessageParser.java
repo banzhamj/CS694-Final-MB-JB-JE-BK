@@ -467,10 +467,10 @@ public class MessageParser
             success = true;
         } catch (Exception e) {
             debug.Print(DbgSub.MESSAGE_PARSER, "Error: " + e.getMessage());
-
         }
         debug.Print(DbgSub.MESSAGE_PARSER, "Read from file: " + IDENT + ".dat.  Password = "
-                        + GlobalData.GetPassword() + " COOKIE = " + GlobalData.GetCookie());
+                + GlobalData.GetPassword() + " COOKIE = " + GlobalData.GetCookie());
+        debug.Print(DbgSub.MESSAGE_PARSER, "success = " + success);
     }                                      
 
 
