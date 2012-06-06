@@ -54,7 +54,6 @@ public class GameBoard extends Applet {
     JTextField passwordArg;
     JTextField playerHostPortArg;
     JTextField getCertArg;
-    JTextField synthesizeAmountArg;
     JTextField tradeRequestArg;
     JTextField statusCrackIDArg;
     JTextField statusCrackResourcesArg;
@@ -163,8 +162,7 @@ public class GameBoard extends Applet {
             synthesizeResourceBox.addItem("WEAPONS");
             synthesizeResourceBox.addItem("COMPUTERS");
             synthesizeResourceBox.addItem("VEHICLES");
-            tempPanel.add(synthesizeAmountArg = new JTextField(15));
-            synthesizeAmountArg.setToolTipText("Amount of resource to synthesize");
+            tempPanel.add(new JLabel(" "));
             tempPanel.add(getCertButton = new JButton("GET_CERTIFICATE"));
             tempPanel.add(getCertArg = new JTextField(15));
             tempPanel.add(makeCertButton = new JButton("MAKE_CERTIFICATE"));
@@ -401,9 +399,9 @@ public class GameBoard extends Applet {
         } else if ( command.equals("GET_CERTIFICATE") ) {
             commandString = command + " " + getCertArg.getText();
         } else if ( command.equals("SYNTHESIZE") ) {
-            commandString = command + " " + synthesizeResourceBox.getSelectedItem() + " " + synthesizeAmountArg.getText();
+            commandString = command + " " + synthesizeResourceBox.getSelectedItem();
         } else if ( command.equals("TRADE_REQUEST") ) {
-            commandString = command + " " + tradeRequestArg.getText();
+            commandString = command + " " + usernameArg.getText() + " " + tradeRequestArg.getText();
         } else if ( command.equals("TRADE_RESPONSE") ) {
             commandString = command + " " + tradeResponseBox.getSelectedItem();
         } else if ( command.equals("WAR_DECLARE") ) {
