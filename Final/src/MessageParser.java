@@ -6,6 +6,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 public class MessageParser
 {
@@ -39,16 +40,10 @@ public class MessageParser
     static String InputFileName = "Input.dat";  
     String[] cmdArr = new String[COMMAND_LIMIT];
 
-    static String MyKey;
-    String MonitorKey;
-    String first;
-    ObjectInputStream oin = null;
-    ObjectOutputStream oout = null;
-
     //Encryption stuff
-    BigInteger myPublicKey;
-    BigInteger mySecretKey;
     boolean IsEncrypted = false;
+    RSA myKey = null;
+    PlayerCertificate monCert;
 
     // Transfer stuff
     String ROUNDS = "20";
@@ -284,18 +279,44 @@ public class MessageParser
             if ( sentmessage.equals("IDENT") )
             {
                 if ( this.CType == 0 ) {
-                    PlayerCertificate monCert = getRMICertificate("MONITOR");
-                    RSA myKey = new RSA(256);
-                    BigInteger m = myKey.publicKey().getModulus();
-                    String myHalf = monCert.getPublicKey().encrypt(m).toString(32);
-                    
-                    SendIt("IDENT " + IDENT + " " + myHalf);
+                    monCert = getRMICertificate("MONITOR");
+                    BigInteger myHalf;
+                    String myHalfEncrypted;
+                    boolean flag;
+                    myKey = this.storage.ReadKey();
+                    if ( myKey == null ) {
+                        myKey = new RSA(256);
+                        System.out.println("making new key");
+                        myHalf = myKey.publicKey().getModulus();
+                        myHalfEncrypted = monCert.getPublicKey().encrypt(myHalf).toString(32);
+                        flag = true;
+                    } 
+                    else {
+                        
+                        System.out.println("using old key from file");
+                        System.out.println("M: " + myKey.publicKey().getModulus());
+                        SecureRandom sr = new SecureRandom();
+                        myHalf = new BigInteger(256, sr);
+                        myHalfEncrypted = monCert.getPublicKey().encrypt(myHalf).toString(32);
+                         flag = false;
+                    }
+                                       
+                    SendIt("IDENT " + IDENT + " " + myHalfEncrypted);
                     
                     String response = in.readLine();
-                    String number = response.split("\\s+")[2];                    
                     
-                    BigInteger srvHalf = myKey.decryptNum(new BigInteger(number, 32));
-                    byte mine[] = myKey.publicKey().getModulus().toByteArray();
+                    System.out.println("r1 " + response);
+                    
+                    String number = response.split("\\s+")[2]; 
+                    
+                    BigInteger srvHalf;
+  //                  if ( flag == false) {
+   //                     srvHalf = new BigInteger(myKey.decrypt(number)); // myKey.decryptNum(new BigInteger(number, 32));
+    //                } else {
+                        srvHalf = myKey.decryptNum(new BigInteger(number, 32));
+      //              }
+                    
+                    byte[] mine = myHalf.toByteArray();
                     byte monitor[] = srvHalf.toByteArray();
                     
                     int keySize = 512;
@@ -321,10 +342,12 @@ public class MessageParser
                     SendIt("IDENT " + IDENT);                    
                 }            
                 
-                success = true;
-            }
-            else
+                success = true;            
+            } else if (sentmessage.equals("MAKE_CERTIFICATE")){
+                this.makeCertificate();                
+            } else
             {
+                System.out.println("SENDING: " + sentmessage);
                 SendIt(sentmessage);
                 success = true;
             }
@@ -520,4 +543,18 @@ public class MessageParser
     	// TODO
         return false;
     }
+
+    public void makeCertificate() {
+        myKey = new RSA();
+        this.storage.WriteKey(myKey);
+        
+        System.out.println("M: " + myKey.publicKey().getModulus());
+        try {
+            SendIt("MAKE_CERTIFICATE " + myKey.publicKey().getExponent().toString(32)
+                    + " " + myKey.publicKey().getModulus().toString(32));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }    
+    
 }
