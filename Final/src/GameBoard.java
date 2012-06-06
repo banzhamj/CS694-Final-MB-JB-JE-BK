@@ -120,8 +120,8 @@ public class GameBoard extends Applet {
             tempPanel.add(serverDisconnectButton = new JButton("Disconnect"));
             tempPanel.add(clientDisconnectButton = new JButton("Disconnect"));
             tempPanel.add(monitorPortBox = new JComboBox());
-            monitorPortBox.addItem("8160");
             monitorPortBox.addItem("8180");
+            monitorPortBox.addItem("8160");
             tempPanel.add(loginPasswordArg = new JTextArea());
             tempPanel.add(new JLabel("Server", JLabel.CENTER));
             tempPanel.add(new JLabel("Client", JLabel.CENTER));

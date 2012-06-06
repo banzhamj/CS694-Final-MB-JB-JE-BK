@@ -2,7 +2,7 @@
 
 IWARS_USER=elchisjm
 IWARS_MON=helios.ececs.uc.edu
-IWARS_MON_PORT=8160
+IWARS_MON_PORT=8180
 IWARS_SERVER_PORT=20000
 
 if [ $1 ]; then IWARS_SERVER_PORT=$1; fi
