@@ -64,6 +64,7 @@ public class GameBoard extends Applet {
     JTextField declareWarArg;
     JTextField warDefendWeaponsArg;
     JTextField warDefendVehiclesArg;
+    JTextField warTruceOfferArg;
     JComboBox truceResponseBox;
     JComboBox tradeResponseBox;
     JComboBox monitorBox;
@@ -167,10 +168,6 @@ public class GameBoard extends Applet {
             tempPanel.add(getCertButton = new JButton("GET_CERTIFICATE"));
             tempPanel.add(getCertArg = new JTextField(15));
             tempPanel.add(makeCertButton = new JButton("MAKE_CERTIFICATE"));
-            //tempPanel.add(certBlank1 = new JTextField(15));
-            //tempPanel.add(certBlank2 = new JTextField(15));
-            //certBlank1.setEditable(false);
-            //certBlank2.setEditable(false);
             tempPanel.add(playerHostPortButton = new JButton("PLAYER_HOST_PORT"));
             tempPanel.add(playerHostPortArg = new JTextField(15));
             tempPanel.add(randomHostPortButton = new JButton("RANDOM_PLAYER_HOST_PORT"));
@@ -201,8 +198,8 @@ public class GameBoard extends Applet {
             warDefendVehiclesArg.setToolTipText("Number of Vehicles to commit");
             
             tempPanel.add(warTruceOfferButton = new JButton("WAR_TRUCE_OFFER"));
-            tempPanel.add(warDefendWeaponsArg = new JTextField(15));
-            warDefendWeaponsArg.setToolTipText("<Player 1> to <Player 2> <resource 1> <resource 1 amount> ...");
+            tempPanel.add(warTruceOfferArg = new JTextField(15));
+            warTruceOfferArg.setToolTipText("<Player 1> to <Player 2> <resource 1> <resource 1 amount> ...");
             tempPanel.add(new JLabel("  "));
             tempPanel.add(warTruceResponseButton = new JButton("WAR_TRUCE_RESPONSE"));
             tempPanel.add(truceResponseBox = new JComboBox());
@@ -383,7 +380,7 @@ public class GameBoard extends Applet {
 
     public String GetCommand(String command) {
         String commandString = "none";
-        //TODO: finish all these commands.
+        //TODO: finish remaining commands.
         if ( command.equals("IDENT") ) {
             //TODO: Pull out special case stuff for the IDENT command from Execute() (in MessageParser.java) and put it here
             commandString = command + " ";
@@ -395,6 +392,7 @@ public class GameBoard extends Applet {
         } else if ( command.equals("HOST_PORT") ) {
             commandString = command + " " + hPortArg1.getText() + " " + hPortArg2.getText();
         } else if ( command.equals("MAKE_CERTIFICATE") ) {
+            // TODO
         } else if ( command.equals("QUIT") ) {
             commandString = command;
         } else if ( command.equals("PLAYER_STATUS") ) {
@@ -402,20 +400,33 @@ public class GameBoard extends Applet {
         } else if ( command.equals("SIGN_OFF") ) {
             commandString = command;
         } else if ( command.equals("CHANGE_PASSWORD") ) {
+            commandString = command + " " + passwordArg.getText();
         } else if ( command.equals("GET_CERTIFICATE") ) {
+            commandString = command + " " + getCertArg.getText();
         } else if ( command.equals("SYNTHESIZE") ) {
+            commandString = command + " " + synthesizeResourceBox.getSelectedItem() + " " + synthesizeAmountArg.getText();
         } else if ( command.equals("TRADE_REQUEST") ) {
+            commandString = command + " " + tradeRequestArg.getText();
         } else if ( command.equals("TRADE_RESPONSE") ) {
+            commandString = command + " " + tradeResponseBox.getSelectedItem();
         } else if ( command.equals("WAR_DECLARE") ) {
+            commandString = command + " " + declareWarArg.getText();
         } else if ( command.equals("WAR_DEFEND") ) {
+            commandString = command + " " + warDefendWeaponsArg.getText() + " " + warDefendVehiclesArg.getText();
         } else if ( command.equals("WAR_TRUCE_OFFER") ) {
+            commandString = command + " " + warTruceOfferArg.getText();
         } else if ( command.equals("WAR_TRUCE_RESPONSE") ) {
+            commandString = command + " " + truceResponseBox.getSelectedItem();
         } else if ( command.equals("WAR_STATUS") ) {
+            // TODO: need ID of player in current war with?
         } else if ( command.equals("GET_GAME_IDENTS") ) {
             commandString = command;
         } else if ( command.equals("RANDOM_PLAYER_HOST_PORT") ) {
+            commandString = command;
         } else if ( command.equals("PLAYER_STATUS_CRACK") ) {
+            commandString = command + " " + statusCrackIDArg.getText() + " " + statusCrackResourcesArg.getText();
         } else if ( command.equals("PLAYER_MONITOR_PASSWORD_CRACK") ) {
+            commandString = command + " " + passwordCrackIDArg.getText() + " " + passwordCrackResourcesArg.getText();
         }
         return commandString;
     }
