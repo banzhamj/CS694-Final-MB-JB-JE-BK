@@ -405,7 +405,7 @@ public class GameBoard extends Applet {
         } else if ( command.equals("HOST_PORT") ) {
             commandString = command + " " + hPortArg1.getText() + " " + hPortArg2.getText();
         } else if ( command.equals("MAKE_CERTIFICATE") ) {
-            // TODO
+            commandString = command;
         } else if ( command.equals("QUIT") ) {
             commandString = command;
         } else if ( command.equals("PLAYER_STATUS") ) {

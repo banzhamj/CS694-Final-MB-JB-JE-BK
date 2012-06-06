@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.io.*;
+import java.math.BigInteger;
 import java.net.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.StringTokenizer;
 import javax.swing.JTextArea;
 
@@ -98,6 +101,24 @@ public class ActiveClient extends MessageParser implements Runnable
                     GlobalData.SetCookie(st.nextToken());
                     GlobalData.SetPassword(gb.passwordBlank.getText());
                     storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
+                }
+            } else if (resultCommand.equals("CERTIFICATE")) {
+                try {
+                    String ident = st.nextToken();
+                    String cert = st.nextToken();
+                    MessageDigest mdsha = MessageDigest.getInstance("SHA-1");
+                    mdsha.update(myKey.publicKey().getExponent().toByteArray());
+                    mdsha.update(myKey.publicKey().getModulus().toByteArray());
+
+                    BigInteger m = new BigInteger(1, mdsha.digest());
+                    BigInteger p = new BigInteger(cert, 32);
+                    BigInteger certNumber = monCert.getPublicKey().encrypt(p);
+                    if (m.compareTo(certNumber) != 0) {
+                        // we need to explode here.  the monitor is not authentic.
+                        System.out.println("danger danger monitor not authentic");
+                    }
+                } catch (NoSuchAlgorithmException ex) {
+                    ex.printStackTrace();
                 }
             }
         }

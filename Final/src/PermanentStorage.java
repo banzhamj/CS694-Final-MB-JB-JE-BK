@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class PermanentStorage {
-    String filename;
+    String identity, filename;
     BufferedReader fIn = null;
     PrintWriter fOut = null;
     static String ResourceFileName = "Resources.dat";
@@ -15,9 +15,42 @@ public class PermanentStorage {
     }
 
     public PermanentStorage(MessageParser mp, String identity) {
+        this.identity = identity;        
         filename = identity + ".dat";
         this.mp = mp;
     }
+    
+    public RSA ReadKey(){
+        RSA key = null;        
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(this.identity + ".key"));
+            key = (RSA) ois.readObject();
+            ois.close();
+        } catch (IOException ex) {
+            // this is cool - means we have not used this user before
+        } catch (ClassNotFoundException ex){
+            ex.printStackTrace();
+        } 
+        
+        return key;
+    }
+    
+    public void WriteKey(RSA key){        
+        try {
+            File f = new File(this.identity + ".key");
+            if(f.exists()){
+                f.delete();
+            }
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.identity + ".key"));
+            oos.writeObject(key);
+            oos.close();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex){
+            ex.printStackTrace();
+        }
+    }
+    
 
     // Write Personal data such as Password and Cookie
     public boolean  WritePersonalData(String Passwd,String Cookie)
