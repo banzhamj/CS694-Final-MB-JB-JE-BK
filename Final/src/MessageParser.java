@@ -59,6 +59,9 @@ public class MessageParser
     String error;
     String comment;
     String ppChecksum;
+    String warDeclaration;
+    String tradeRequest;
+    String warTruce;
 
     String lastCommandSent;
 
@@ -93,6 +96,9 @@ public class MessageParser
             boolean foundError = false;
             boolean foundPPChecksum = false;
             boolean foundComment = false;
+            boolean foundWarDeclaration = false;
+            boolean foundTradeRequest = false;
+            boolean foundWarTruce = true;
            
             //After IDENT has been sent-to handle partially encrypted msg group
             while ( moreDirectives ) {
@@ -114,7 +120,9 @@ public class MessageParser
                             }
                         } else if ( directive.equalsIgnoreCase("RESULT:") ) {
                             result = st.GetRemaining();
-                            if ( result.equalsIgnoreCase("QUIT") || result.equalsIgnoreCase("SIGN_OFF") ) {
+                            if ( result.equalsIgnoreCase("QUIT") || result.equalsIgnoreCase("SIGN_OFF") ||
+                                    result.equalsIgnoreCase("TRADE_RESPONSE") || result.equalsIgnoreCase("WAR_DEFEND") ||
+                                    result.equalsIgnoreCase("WAR_TRUCE_RESPONSE")) {
                                 moreDirectives = false;
                             }
                             if ( result != null && !result.equals("")) {
@@ -146,6 +154,24 @@ public class MessageParser
                                 logger.Print(parentSub, "COMMAND_ERROR: " + error);
                                 foundError = true;
                             }
+                        } else if ( directive.equalsIgnoreCase("WAR_DECLARATION:") ) {
+                            warDeclaration = st.GetRemaining();
+                            if ( warDeclaration != null && !warDeclaration.equals("") ) {
+                                logger.Print(parentSub, "Incoming war declaration from: " + warDeclaration);
+                                foundWarDeclaration = true;
+                            }
+                        } else if ( directive.equalsIgnoreCase("TRADE:") ) {
+                            tradeRequest = st.GetRemaining();
+                            if ( tradeRequest != null && !tradeRequest.equals("") ) {
+                                logger.Print(parentSub, "Incoming trade request: " + tradeRequest);
+                                foundTradeRequest = true;
+                            }
+                        } else if ( directive.equalsIgnoreCase("WAR_TRUCE_OFFERED:") ) {
+                            warTruce = st.GetRemaining();
+                            if ( warTruce != null && !warTruce.equals("") ) {
+                                logger.Print(parentSub, "Incoming war truce offer: " + warTruce);
+                                foundWarTruce = true;
+                            }
                         } else {
                             System.out.println("Unknown Directive: " + directive);
                             moreDirectives = false;
@@ -170,6 +196,15 @@ public class MessageParser
             }
             if ( !foundPPChecksum ) {
                 ppChecksum = "none";
+            }
+            if ( !foundWarDeclaration ) {
+                warDeclaration = "none";
+            }
+            if ( !foundTradeRequest ) {
+                tradeRequest = "none";
+            }
+            if ( !foundWarTruce ) {
+                warTruce = "none";
             }
 
         } catch (IOException e) {
