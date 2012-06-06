@@ -371,8 +371,8 @@ public class GameBoard extends Applet {
                 } else if ( e.getSource() == warTruceResponseButton ) {
                     ch.SetCommand("WAR_TRUCE_RESPONSE");
                 } else if ( e.getSource() == warDefendButton ) {
-                    ch.SetCommand("WAR_DEFEND");
-                    warDefendButton.setBackground(Color.LIGHT_GRAY);
+//                    ch.SetCommand("WAR_DEFEND");
+//                    warDefendButton.setBackground(Color.LIGHT_GRAY);
                 } else if ( e.getSource() == getCertButton ) {
                     ch.SetCommand("GET_CERTIFICATE");
                 } else if ( e.getSource() == tradeRequestButton ) {

@@ -36,6 +36,7 @@ class ConnectionHandler extends MessageParser implements Runnable
             if ( require.equalsIgnoreCase("ALIVE") ) {
                 Execute(require + " " + GlobalData.GetCookie());
             } else if ( require.equalsIgnoreCase("WAR_DEFEND") ) {
+                Color temp = gb.warDefendButton.getBackground();
                 gb.warDefendButton.setBackground(Color.yellow);
                 try {
                     wait(RESPONSE_DELAY);
@@ -45,14 +46,23 @@ class ConnectionHandler extends MessageParser implements Runnable
                 } else {
                     Execute(require + " 0 0");
                 }
-                gb.warDefendButton.setBackground(Color.cyan);
+                gb.warDefendButton.setBackground(temp);
             } else if ( require.equalsIgnoreCase("TRADE_RESPONSE") ) {
+                Color temp = gb.tradeResponseButton.getBackground();
                 gb.tradeResponseButton.setBackground(Color.yellow);
                 try {
                     wait(RESPONSE_DELAY);
                 } catch (Exception e) {}
                 Execute(require + " " + gb.tradeResponseBox.getSelectedItem().toString());
-                gb.tradeResponseButton.setBackground(Color.cyan);
+                gb.tradeResponseButton.setBackground(temp);
+            } else if ( require.equalsIgnoreCase("WAR_TRUCE_RESPONSE") ) {
+                Color temp = gb.warTruceResponseButton.getBackground();
+                gb.warTruceResponseButton.setBackground(Color.yellow);
+                try {
+                    wait(RESPONSE_DELAY);
+                } catch (Exception e) {}
+                Execute(require + " " + gb.truceResponseBox.getSelectedItem().toString());
+                gb.warTruceResponseButton.setBackground(temp);
             } else {
                 Execute(require);
             }
