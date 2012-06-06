@@ -9,6 +9,7 @@ class ConnectionHandler extends MessageParser implements Runnable
     private Socket incoming;
     //private int counter;
     Thread runner;
+    Integer RESPONSE_DELAY=10000; //10 seconds
 
     public ConnectionHandler (GameBoard gb, Socket i, int c, String name, String password)
     {
@@ -28,7 +29,7 @@ class ConnectionHandler extends MessageParser implements Runnable
         return ProcessResult();
     }
 
-    public void ProcessUntilQuit()
+    public synchronized void ProcessUntilQuit()
     {
         while (!require.equals("none") ) {
             ProcessResult();
@@ -36,6 +37,22 @@ class ConnectionHandler extends MessageParser implements Runnable
                 Execute(require + " " + GlobalData.GetCookie());
             } else if ( require.equalsIgnoreCase("WAR_DEFEND") ) {
                 gb.warDefendButton.setBackground(Color.yellow);
+                try {
+                    wait(RESPONSE_DELAY);
+                } catch(Exception e) {}
+                if ( gb.warDefendWeaponsArg.getText() != null && gb.warDefendVehiclesArg.getText() != null ) {
+                    Execute(require + " " + gb.warDefendWeaponsArg.getText() + " " + gb.warDefendVehiclesArg.getText());
+                } else {
+                    Execute(require + " 0 0");
+                }
+                gb.warDefendButton.setBackground(Color.cyan);
+            } else if ( require.equalsIgnoreCase("TRADE_RESPONSE") ) {
+                gb.tradeResponseButton.setBackground(Color.yellow);
+                try {
+                    wait(RESPONSE_DELAY);
+                } catch (Exception e) {}
+                Execute(require + " " + gb.tradeResponseBox.getSelectedItem().toString());
+                gb.tradeResponseButton.setBackground(Color.cyan);
             } else {
                 Execute(require);
             }
@@ -96,7 +113,7 @@ class ConnectionHandler extends MessageParser implements Runnable
             }
         }
     }
-
+    
     public void start()
     {
         if ( runner == null )
