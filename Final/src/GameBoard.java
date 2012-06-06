@@ -480,8 +480,11 @@ class AutoRunThread extends Thread
                 Runtime.getRuntime().exec("bash ../../Final/scripts/start.sh " + port).waitFor();
                 mGameBoard.appGlobalMessage.setText( "Tunnels started." );
                 
+                Thread.sleep( 5000 );
+
                 // start server
-                Integer hostPort = Integer.valueOf(mGameBoard.hostPortArg.getText());
+                mGameBoard.appGlobalMessage.setText( "Starting server..." );
+                Integer hostPort = port;
                 Integer monitorPort = Integer.valueOf(mGameBoard.monitorPortBox.getSelectedItem().toString());
                 if ( mGameBoard.server == null || mGameBoard.server.mbServerRunning == false ) {
                     System.out.println("Starting server: " + monitorPort + " <-> " + hostPort);
@@ -492,10 +495,12 @@ class AutoRunThread extends Thread
                     mGameBoard.server.connected = true;
                     mGameBoard.serverConnectButton.setBackground(Color.green);
                 }
+                mGameBoard.appGlobalMessage.setText( "Server started." );
                 
                 // connect client
+                mGameBoard.appGlobalMessage.setText( "Connecting client..." );
                 if ( mGameBoard.ac == null ) {
-                    hostPort = Integer.valueOf(mGameBoard.hostPortArg.getText());
+                    hostPort = port;
                     monitorPort = Integer.valueOf(mGameBoard.monitorPortBox.getSelectedItem().toString());
 
                     mGameBoard.ac = new ActiveClient(mGameBoard, mGameBoard.monitorBox.getSelectedItem().toString(), monitorPort, hostPort, 0, mGameBoard.usernameArg.getText(), mGameBoard.loginPasswordArg.getText());
@@ -505,27 +510,53 @@ class AutoRunThread extends Thread
                     mGameBoard.ac.connected = true;
                     mGameBoard.clientConnectButton.setBackground(Color.green);
                 }
+                mGameBoard.appGlobalMessage.setText( "Client connected." );
+                
+                Thread.sleep( 5000 );
                 
                 // send IDENT
+                mGameBoard.appGlobalMessage.setText( "Sending IDENT..." );
                 mGameBoard.ch.SetCommand("IDENT");
+                mGameBoard.appGlobalMessage.setText( "IDENT sent." );
+                
+                Thread.sleep( 2000 );
                 
                 // send ALIVE
+                mGameBoard.appGlobalMessage.setText( "Sending ALIVE..." );
                 mGameBoard.ch.SetCommand("ALIVE");
+                mGameBoard.appGlobalMessage.setText( "ALIVE sent." );
                
-                // send HOST_PORT
-                mGameBoard.ch.SetCommand("HOST_PORT");
+                Thread.sleep( 2000 );
                 
-                // send QUIT
-                mGameBoard.ch.SetCommand("QUIT");
+                // send HOST_PORT
+                mGameBoard.appGlobalMessage.setText( "Sending HOST_PORT..." );
+                mGameBoard.ch.SetCommand("HOST_PORT");
+                mGameBoard.appGlobalMessage.setText( "HOST_PORT sent." );
+                
+                Thread.sleep( 2000 );
+                
+                // disconnect client
+                mGameBoard.appGlobalMessage.setText( "Disconnecting client..." );
+                if ( mGameBoard.ac != null && mGameBoard.ac.connected ) {
+                    mGameBoard.ch.SetCommand("QUIT");
+                    mGameBoard.ac.running = false;
+                    mGameBoard.ac = null;
+                    mGameBoard.clientConnectButton.setBackground(Color.red);
+                }
+                mGameBoard.appGlobalMessage.setText( "Client disconnected." );
 
                 // sleep
+                mGameBoard.appGlobalMessage.setText( "Sleeping..." );
                 Thread.sleep( 300000 );
+                mGameBoard.appGlobalMessage.setText( "Done sleeping." );
                 
                 // stop server
+                mGameBoard.appGlobalMessage.setText( "Stopping server..." );
                 if ( mGameBoard.server.connected ) {
                     mGameBoard.serverConnectButton.setBackground(Color.red);
                     mGameBoard.server.mbServerRunning = false;
                 }
+                mGameBoard.appGlobalMessage.setText( "Server stopped." );
                 
                 mGameBoard.appGlobalMessage.setText( "Stopping tunnels..." );
                 Runtime.getRuntime().exec("bash ../../Final/scripts/stop.sh").waitFor();
