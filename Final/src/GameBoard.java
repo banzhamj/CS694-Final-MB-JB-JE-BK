@@ -334,7 +334,8 @@ public class GameBoard extends Applet {
                 } else if ( e.getSource() == gameIdentsButton ) {
                     ch.SetCommand("GET_GAME_IDENTS");
                 } else if ( e.getSource() == changePasswordButton ) {
-                    //TODO: ac.ChangePassword(passwordArg.getText());
+                    passwordBlank.setText(passwordArg.getText());
+                    ch.SetCommand("CHANGE_PASSWORD");
                 } else if ( e.getSource() == statusButton ) {
                     ch.SetCommand("PLAYER_STATUS");
                 } else if ( e.getSource() == signOffButton ) {
@@ -400,7 +401,7 @@ public class GameBoard extends Applet {
         } else if ( command.equals("SIGN_OFF") ) {
             commandString = command;
         } else if ( command.equals("CHANGE_PASSWORD") ) {
-            commandString = command + " " + passwordArg.getText();
+            commandString = command + " " + GlobalData.GetPassword() + " " + passwordArg.getText();
         } else if ( command.equals("GET_CERTIFICATE") ) {
             commandString = command + " " + getCertArg.getText();
         } else if ( command.equals("SYNTHESIZE") ) {

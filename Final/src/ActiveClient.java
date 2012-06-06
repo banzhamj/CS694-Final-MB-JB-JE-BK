@@ -71,28 +71,6 @@ public class ActiveClient extends MessageParser implements Runnable
         running = false;
     }
 
-    public boolean Login()
-    {
-        try {
-            Execute(GetNextCommand(GetMonitorMessage(), ""));
-            Execute(GetNextCommand(GetMonitorMessage(), ""));
-
-            String passwordString = in.readLine();
-
-            if (passwordString.contains("PASSWORD")) {
-                String[] tmp = passwordString.split(" ");
-                //COOKIE = tmp[2];
-                GlobalData.SetCookie(tmp[2]);
-                debug.Print(DbgSub.MESSAGE_PARSER, "Monitor Cookie: " + tmp[2]);
-                storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
-            }
-            Execute(GetNextCommand(GetMonitorMessage(), ""));
-        } catch (IOException e) { return false;}
-        catch (NullPointerException e) { return false;}
-        debug.Print(DbgSub.MESSAGE_PARSER, GetMonitorMessage());
-        return true;
-    }
-
     public void ProcessResult()
     {
         //TODO: case results processing for each type of command we can issue
@@ -116,10 +94,9 @@ public class ActiveClient extends MessageParser implements Runnable
             if ( resultCommand.equalsIgnoreCase(lastCommandSent) ) {
                 if ( lastCommandSent.equalsIgnoreCase("QUIT") || lastCommandSent.equalsIgnoreCase("SIGN_OFF") ) {
                     running = false;
-                } else if ( lastCommandSent.equalsIgnoreCase("PASSWORD") ) {
-                    if ( GlobalData.GetCookie() == null ) {
+                } else if ( lastCommandSent.equalsIgnoreCase("PASSWORD") || lastCommandSent.equalsIgnoreCase("CHANGE_PASSWORD") ) {
                     GlobalData.SetCookie(st.nextToken());
-                    }
+                    GlobalData.SetPassword(gb.passwordBlank.getText());
                     storage.WritePersonalData(GlobalData.GetPassword(), GlobalData.GetCookie());
                 }
             }
@@ -143,20 +120,15 @@ public class ActiveClient extends MessageParser implements Runnable
             HOSTNAME = toMonitor.getLocalAddress().getHostName();
             CType = 0;   //Indicates Client 
             HOST_PORT = LOCAL_PORT;
-//            if ( !Login() )
-//            {
-//                if ( IsVerified == 0 ) System.exit(1);
-//            }
-//            logger.Print(DbgSub.ACTIVE_CLIENT, "***************************");
 
             //Get the Initial Monitor comment message
             GetMonitorMessage();
             if ( GlobalData.GetPassword() == null ) {
                 GlobalData.SetPassword(guiPassword);
             }
-            //TODO: Loop here and wait for commands from GUI
+            //TODO: (done?) Loop here and wait for commands from GUI
             while ( running ) {
-                //TODO: run commands here
+                //TODO: (done?) run commands here
                 Execute(gb.GetCommand(gb.ch.CreateCommand()));
                  //Execute(gb.GetCommand());
                 GetMonitorMessage();
