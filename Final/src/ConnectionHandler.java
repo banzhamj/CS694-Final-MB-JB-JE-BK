@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.*;
 import java.net.*;
 import java.util.StringTokenizer;
@@ -33,6 +34,8 @@ class ConnectionHandler extends MessageParser implements Runnable
             ProcessResult();
             if ( require.equalsIgnoreCase("ALIVE") ) {
                 Execute(require + " " + GlobalData.GetCookie());
+            } else if ( require.equalsIgnoreCase("WAR_DEFEND") ) {
+                gb.warDefendButton.setBackground(Color.yellow);
             } else {
                 Execute(require);
             }
