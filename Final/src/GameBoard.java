@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -80,6 +82,8 @@ public class GameBoard extends Applet {
     ActiveClient ac = null;
     Server server = null;
     CommandHandler ch = null;
+    
+    boolean mbAutoRunEnabled = false;
     
     class Frame extends JFrame implements ActionListener {
 
@@ -278,7 +282,21 @@ public class GameBoard extends Applet {
         	try
         	{
                 if ( e.getSource() == autoRunButton ) {
-                    // TODO: start auto run of program
+                    mbAutoRunEnabled = ! mbAutoRunEnabled;
+                    
+                    if ( mbAutoRunEnabled == true )
+                    {
+                        appGlobalMessage.setText( "Starting thread..." );
+                        AutoRunThread art = new AutoRunThread( gb );
+                        art.start();
+                        appGlobalMessage.setText( "Thread started." );
+
+                        appGlobalMessage.setText( "Auto-run mode enabled." );
+                    }
+                    else
+                    {
+                        appGlobalMessage.setText( "Auto-run mode disabled." );
+                    }
                 } else if ( e.getSource() == serverConnectButton ) {
                     Integer hostPort = Integer.valueOf(hostPortArg.getText());
                     Integer monitorPort = Integer.valueOf(monitorPortBox.getSelectedItem().toString());
@@ -432,5 +450,94 @@ public class GameBoard extends Applet {
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+}
+
+class AutoRunThread extends Thread
+{
+    GameBoard mGameBoard;
+    Random mGenerator;
+    
+    public AutoRunThread( GameBoard gb )
+    {
+        mGameBoard = gb;
+        mGenerator = new Random();
+    }
+    
+    public void run()
+    {
+        mGameBoard.appGlobalMessage.setText( "Thread entered." );
+       
+        try
+        {
+            while ( mGameBoard.mbAutoRunEnabled )
+            {
+                // pick port number
+                int port = mGenerator.nextInt( 65536 - 1024 ) + 1024;
+                
+                // start tunnels
+                mGameBoard.appGlobalMessage.setText( "Starting tunnels, using server port " + port + "..." );
+                Runtime.getRuntime().exec("bash ../../Final/scripts/start.sh " + port).waitFor();
+                mGameBoard.appGlobalMessage.setText( "Tunnels started." );
+                
+                // start server
+                Integer hostPort = Integer.valueOf(mGameBoard.hostPortArg.getText());
+                Integer monitorPort = Integer.valueOf(mGameBoard.monitorPortBox.getSelectedItem().toString());
+                if ( mGameBoard.server == null || mGameBoard.server.mbServerRunning == false ) {
+                    System.out.println("Starting server: " + monitorPort + " <-> " + hostPort);
+                    mGameBoard.server = new Server(mGameBoard, monitorPort, hostPort, mGameBoard.usernameArg.getText(), mGameBoard.loginPasswordArg.getText());
+                }
+                if ( !mGameBoard.server.connected ) {
+                    mGameBoard.server.start();
+                    mGameBoard.server.connected = true;
+                    mGameBoard.serverConnectButton.setBackground(Color.green);
+                }
+                
+                // connect client
+                if ( mGameBoard.ac == null ) {
+                    hostPort = Integer.valueOf(mGameBoard.hostPortArg.getText());
+                    monitorPort = Integer.valueOf(mGameBoard.monitorPortBox.getSelectedItem().toString());
+
+                    mGameBoard.ac = new ActiveClient(mGameBoard, mGameBoard.monitorBox.getSelectedItem().toString(), monitorPort, hostPort, 0, mGameBoard.usernameArg.getText(), mGameBoard.loginPasswordArg.getText());
+                }
+                if ( !mGameBoard.ac.connected ) {
+                    mGameBoard.ac.start();
+                    mGameBoard.ac.connected = true;
+                    mGameBoard.clientConnectButton.setBackground(Color.green);
+                }
+                
+                // send IDENT
+                mGameBoard.ch.SetCommand("IDENT");
+                
+                // send ALIVE
+                mGameBoard.ch.SetCommand("ALIVE");
+               
+                // send HOST_PORT
+                mGameBoard.ch.SetCommand("HOST_PORT");
+                
+                // send QUIT
+                mGameBoard.ch.SetCommand("QUIT");
+
+                // sleep
+                Thread.sleep( 300000 );
+                
+                // stop server
+                if ( mGameBoard.server.connected ) {
+                    mGameBoard.serverConnectButton.setBackground(Color.red);
+                    mGameBoard.server.mbServerRunning = false;
+                }
+                
+                mGameBoard.appGlobalMessage.setText( "Stopping tunnels..." );
+                Runtime.getRuntime().exec("bash ../../Final/scripts/stop.sh").waitFor();
+                mGameBoard.appGlobalMessage.setText( "Tunnels stopped." );
+            }
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            mGameBoard.appGlobalMessage.setText( ex.toString() );
+       }
+        
+        mGameBoard.appGlobalMessage.setText( "Thread exiting." );
     }
 }
