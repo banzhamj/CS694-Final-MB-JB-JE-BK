@@ -37,7 +37,7 @@ public class GameBoard extends Applet {
     JButton warDefendButton;
     JButton getCertButton;
     JButton tradeRequestButton;
-    JButton tradeResponeButton;
+    JButton tradeResponseButton;
     JButton synthesizeButton;
     JButton serverConnectButton;
     JButton serverDisconnectButton;
@@ -177,7 +177,7 @@ public class GameBoard extends Applet {
             tempPanel.add(tradeRequestArg = new JTextField(15));
             tempPanel.add(new JLabel("  "));
             tradeRequestArg.setToolTipText("Format: <resource_to> <resource_to_amount> for <Player 2> <resource_from> <resource_from_amount>");
-            tempPanel.add(tradeResponeButton = new JButton("TRADE_RESPONSE"));
+            tempPanel.add(tradeResponseButton = new JButton("TRADE_RESPONSE"));
             tempPanel.add(tradeResponseBox = new JComboBox());
             tradeResponseBox.addItem("Accept");
             tradeResponseBox.addItem("Decline");
@@ -264,7 +264,7 @@ public class GameBoard extends Applet {
             warDefendButton.addActionListener(this);
             getCertButton.addActionListener(this);
             tradeRequestButton.addActionListener(this);
-            tradeResponeButton.addActionListener(this);
+            tradeResponseButton.addActionListener(this);
             synthesizeButton.addActionListener(this);
             serverConnectButton.addActionListener(this);
             serverDisconnectButton.addActionListener(this);
@@ -377,8 +377,8 @@ public class GameBoard extends Applet {
                     ch.SetCommand("GET_CERTIFICATE");
                 } else if ( e.getSource() == tradeRequestButton ) {
                     ch.SetCommand("TRADE_REQUEST");
-                } else if ( e.getSource() == tradeResponeButton ) {
-                    ch.SetCommand("TRADE_RESPONSE");
+                } else if ( e.getSource() == tradeResponseButton ) {
+//                    ch.SetCommand("TRADE_RESPONSE");
                 } else if ( e.getSource() == synthesizeButton ) {
                     ch.SetCommand("SYNTHESIZE");
                 }
