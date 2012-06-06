@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 public class GameBoard extends Applet {
 
 	private static final long serialVersionUID = 944417097790033967L;
-    JButton encryptButton;
     JButton identButton;
     JButton passwordButton;
     JButton hPortButton;
@@ -62,6 +61,7 @@ public class GameBoard extends Applet {
     JTextField passwordCrackIDArg;
     JTextField passwordCrackResourcesArg;
     JTextField declareWarArg;
+    JTextField warStatusArg;
     JTextField warDefendWeaponsArg;
     JTextField warDefendVehiclesArg;
     JTextField warTruceOfferArg;
@@ -171,9 +171,6 @@ public class GameBoard extends Applet {
             tempPanel.add(playerHostPortButton = new JButton("PLAYER_HOST_PORT"));
             tempPanel.add(playerHostPortArg = new JTextField(15));
             tempPanel.add(randomHostPortButton = new JButton("RANDOM_PLAYER_HOST_PORT"));
-            tempPanel.add(new JLabel("  "));
-            tempPanel.add(new JLabel("  "));
-            tempPanel.add(new JLabel("  "));
             tempPanel.add(tradeRequestButton = new JButton("TRADE_REQUEST"));
             tempPanel.add(tradeRequestArg = new JTextField(15));
             tempPanel.add(new JLabel("  "));
@@ -189,7 +186,10 @@ public class GameBoard extends Applet {
             tempPanel.add(declareWarButton = new JButton("WAR_DECLARE"));
             tempPanel.add(declareWarArg = new JTextField(15));
             declareWarArg.setToolTipText("<Player to wage war against> <Enemy Hostname> <Enemy Port> <No. Weapons to Commit> <No. Vehicles to Commit>");
+            tempPanel.add(new JLabel(" " ));
             tempPanel.add(warStatusButton = new JButton("WAR_STATUS"));
+            tempPanel.add(warStatusArg = new JTextField(15));
+            tempPanel.add(new JLabel(" "));
             warStatusButton.setToolTipText("Get status of current war");
             tempPanel.add(warDefendButton = new JButton("WAR_DEFEND"));
             tempPanel.add(warDefendWeaponsArg = new JTextField(15));
@@ -317,8 +317,6 @@ public class GameBoard extends Applet {
                         ac = null;
                         clientConnectButton.setBackground(Color.red);
                     }
-                } else if ( e.getSource() == encryptButton ) {
-                    // TODO
                 } else if ( e.getSource() == identButton ) {
                     ch.SetCommand("IDENT");
                 } else if ( e.getSource() == passwordButton ) {
@@ -356,17 +354,15 @@ public class GameBoard extends Applet {
                     ch.SetCommand("WAR_STATUS");
                 } else if ( e.getSource() == warTruceResponseButton ) {
                     ch.SetCommand("WAR_TRUCE_RESPONSE");
-                    //TODO: ac.Execute("WAR_TRUCE_RESPONSE " + truceResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == warDefendButton ) {
                     ch.SetCommand("WAR_DEFEND");
+                    warDefendButton.setBackground(Color.LIGHT_GRAY);
                 } else if ( e.getSource() == getCertButton ) {
                     ch.SetCommand("GET_CERTIFICATE");
-                    //TODO: ac.Execute("GET_CERTIFICATE " + getCertArg.getText());
                 } else if ( e.getSource() == tradeRequestButton ) {
                     ch.SetCommand("TRADE_REQUEST");
                 } else if ( e.getSource() == tradeResponeButton ) {
                     ch.SetCommand("TRADE_RESPONSE");
-                    //TODO: ac.Execute("TRADE_RESPONSE " + tradeResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == synthesizeButton ) {
                     ch.SetCommand("SYNTHESIZE");
                 }
@@ -383,8 +379,8 @@ public class GameBoard extends Applet {
         String commandString = "none";
         //TODO: finish remaining commands.
         if ( command.equals("IDENT") ) {
-            //TODO: Pull out special case stuff for the IDENT command from Execute() (in MessageParser.java) and put it here
-            commandString = command + " ";
+            //TODO: (deferred) sPull out special case stuff for the IDENT command from Execute() (in MessageParser.java) and put it here
+            commandString = command;
         } else if ( command.equals("PASSWORD")) {
             commandString = command + " " + GlobalData.GetPassword();
         } else if ( command.equals("ALIVE") ) {
@@ -419,7 +415,7 @@ public class GameBoard extends Applet {
         } else if ( command.equals("WAR_TRUCE_RESPONSE") ) {
             commandString = command + " " + truceResponseBox.getSelectedItem();
         } else if ( command.equals("WAR_STATUS") ) {
-            // TODO: need ID of player in current war with?
+            commandString = command + " " + warStatusArg.getText();
         } else if ( command.equals("GET_GAME_IDENTS") ) {
             commandString = command;
         } else if ( command.equals("RANDOM_PLAYER_HOST_PORT") ) {

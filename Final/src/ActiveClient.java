@@ -130,7 +130,6 @@ public class ActiveClient extends MessageParser implements Runnable
             while ( running ) {
                 //TODO: (done?) run commands here
                 Execute(gb.GetCommand(gb.ch.CreateCommand()));
-                 //Execute(gb.GetCommand());
                 GetMonitorMessage();
                 if ( require != null && !require.equals("none") ) {
                     debug.Print(DbgSub.ACTIVE_CLIENT, "REQUIRE: " + require);
@@ -150,18 +149,19 @@ public class ActiveClient extends MessageParser implements Runnable
             toMonitor.close(); 
             out.close(); 
             in.close();
-            try
-            {
-                Thread.sleep(DELAY);
-            }
-            catch ( Exception e )
-            {
-            	e.printStackTrace();
-                if ( gb != null )
-                {
-                    gb.appGlobalMessage.setText( e.toString() );
-                }
-            }
+            gb.ac = null;
+//            try
+//            {
+//                Thread.sleep(DELAY);
+//            }
+//            catch ( Exception e )
+//            {
+//            	e.printStackTrace();
+//                if ( gb != null )
+//                {
+//                    gb.appGlobalMessage.setText( e.toString() );
+//                }
+//            }
 
         }
         catch ( UnknownHostException e )
