@@ -345,29 +345,32 @@ public class GameBoard extends Applet {
                 } else if ( e.getSource() == quitButton ) {
                     ch.SetCommand("QUIT");
                 } else if ( e.getSource() == makeCertButton ) {
-                    // TODO
+                    ch.SetCommand("MAKE_CERTIFICATE");
                 } else if ( e.getSource() == playerHostPortButton ) {
-                    // TODO
+                    ch.SetCommand("HOST_PORT");
                 } else if ( e.getSource() == randomHostPortButton ) {
                     ch.SetCommand("RANDOM_PLAYER_HOST_PORT");
                 } else if ( e.getSource() == declareWarButton ) {
-                    // TODO
+                    ch.SetCommand("WAR_DECLARE");
                 } else if ( e.getSource() == warTruceOfferButton ) {
-                    // TODO
+                    ch.SetCommand("WAR_TRUCE_OFFER");
                 } else if ( e.getSource() == warStatusButton ) {
-                    // TODO
+                    ch.SetCommand("WAR_STATUS");
                 } else if ( e.getSource() == warTruceResponseButton ) {
+                    ch.SetCommand("WAR_TRUCE_RESPONSE");
                     //TODO: ac.Execute("WAR_TRUCE_RESPONSE " + truceResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == warDefendButton ) {
-                    // TODO
+                    ch.SetCommand("WAR_DEFEND");
                 } else if ( e.getSource() == getCertButton ) {
+                    ch.SetCommand("GET_CERTIFICATE");
                     //TODO: ac.Execute("GET_CERTIFICATE " + getCertArg.getText());
                 } else if ( e.getSource() == tradeRequestButton ) {
-                    // TODO
+                    ch.SetCommand("TRADE_REQUEST");
                 } else if ( e.getSource() == tradeResponeButton ) {
+                    ch.SetCommand("TRADE_RESPONSE");
                     //TODO: ac.Execute("TRADE_RESPONSE " + tradeResponseBox.getSelectedItem().toString());
                 } else if ( e.getSource() == synthesizeButton ) {
-                    // TODO
+                    ch.SetCommand("SYNTHESIZE");
                 }
             }
             catch ( Exception ex )
