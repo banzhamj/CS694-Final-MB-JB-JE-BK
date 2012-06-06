@@ -290,7 +290,6 @@ public class MessageParser
             }
             else
             {
-                System.out.println("SENDING: " + sentmessage);
                 SendIt(sentmessage);
                 success = true;
             }
@@ -311,7 +310,7 @@ public class MessageParser
 
     public void SendIt(String message) throws IOException {
         try {
-            System.out.println("Sending : " + message);
+            System.out.println("Sending: " + message);
             out.println(message);
             if (out.checkError() == true)
                     throw (new IOException());

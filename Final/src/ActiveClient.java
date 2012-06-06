@@ -18,6 +18,7 @@ public class ActiveClient extends MessageParser implements Runnable
     long prevTime,present;
     public boolean connected = false;
     public boolean running = true;
+    String guiPassword;
 
     public ActiveClient()
     {
@@ -38,6 +39,7 @@ public class ActiveClient extends MessageParser implements Runnable
         this.log = gb.clientLog;
         logger = new Util(log);
         parentSub = DbgSub.ACTIVE_CLIENT;
+        guiPassword = password;
         try
         {
             SleepMode = sm;
@@ -149,6 +151,9 @@ public class ActiveClient extends MessageParser implements Runnable
 
             //Get the Initial Monitor comment message
             GetMonitorMessage();
+            if ( GlobalData.GetPassword() == null ) {
+                GlobalData.SetPassword(guiPassword);
+            }
             //TODO: Loop here and wait for commands from GUI
             while ( running ) {
                 //TODO: run commands here
