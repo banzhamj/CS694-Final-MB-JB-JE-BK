@@ -23,7 +23,7 @@ public class MessageParser
     
     
     
-    
+    // THIS RIGHT HERE, RIGHT HERE, DETERMINES IF WE WILL ENCRYPT COMMS
     boolean encrypting = true;
     
     

@@ -71,6 +71,7 @@ public class GameBoard extends Applet {
     JComboBox monitorBox;
     JComboBox monitorPortBox;
     JComboBox synthesizeResourceBox;
+    
     JTextArea hostPortArg;
     JTextArea usernameArg;
     JTextArea loginPasswordArg;

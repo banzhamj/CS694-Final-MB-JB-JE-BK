@@ -10,7 +10,7 @@ if [ $1 ]; then IWARS_SERVER_PORT=$1; fi
 echo "Using server port $IWARS_SERVER_PORT..."
 
 # avoid zombies.  ensure everything is stopped.
-`dirname $0`/stop.sh
+#`dirname $0`/stop.sh
 
 # tunnel for active client
 xterm -e ssh -vL $IWARS_MON_PORT:$IWARS_MON:$IWARS_MON_PORT $IWARS_USER@$IWARS_MON &
