@@ -90,6 +90,8 @@ class ConnectionHandler extends MessageParser implements Runnable
         {
             in = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
             out = new PrintWriter(incoming.getOutputStream(),true);
+            plainIn = in;
+            plainOut = out;
             HOST_PORT = Server.LOCAL_PORT;
             CType = 1;  //Indicates Server
             logger.Print(DbgSub.CONNECTION_HANDLER, "Starting login from Server..");

@@ -20,6 +20,17 @@ public class MessageParser
     PrintWriter out = null; 
     BufferedReader in = null; 
     
+    
+    
+    
+    
+    boolean encrypting = true;
+    
+    
+    
+    
+    
+    
     KarnBufferedReader karnIn = null;
     KarnPrintWriter karnOut = null;
     
@@ -278,28 +289,30 @@ public class MessageParser
         {            
             if ( sentmessage.equals("IDENT") )
             {
-                if ( this.CType == 0 ) {
+                //if ( this.CType == 0 ) {
+                    if(encrypting){
                     monCert = getRMICertificate("MONITOR");
                     BigInteger myHalf;
                     String myHalfEncrypted;
                     boolean flag;
                     myKey = this.storage.ReadKey();
-                    if ( myKey == null ) {
-                        myKey = new RSA(256);
-                        System.out.println("making new key");
-                        myHalf = myKey.publicKey().getModulus();
-                        myHalfEncrypted = monCert.getPublicKey().encrypt(myHalf).toString(32);
-                        flag = true;
-                    } 
-                    else {
-                        
-                        System.out.println("using old key from file");
-                        System.out.println("M: " + myKey.publicKey().getModulus());
-                        SecureRandom sr = new SecureRandom();
-                        myHalf = new BigInteger(256, sr);
-                        myHalfEncrypted = monCert.getPublicKey().encrypt(myHalf).toString(32);
-                         flag = false;
-                    }
+                        if ( myKey == null ) {
+                            myKey = new RSA(256);
+                            System.out.println("making new key");
+                            myHalf = myKey.publicKey().getModulus();
+                            myHalfEncrypted = monCert.getPublicKey().encrypt(myHalf).toString(32);
+                            flag = true;
+                        } 
+                        else {
+
+                            System.out.println("using old key from file");
+                            System.out.println("M: " + myKey.publicKey().getModulus());
+                            SecureRandom sr = new SecureRandom();
+                            myHalf = new BigInteger(256, sr);
+                            myHalfEncrypted = monCert.getPublicKey().encrypt(myHalf).toString(32);
+                             flag = false;
+                        }                 
+                    
                                        
                     SendIt("IDENT " + IDENT + " " + myHalfEncrypted);
                     
@@ -337,10 +350,14 @@ public class MessageParser
                     }
                     
                     in = karnIn;
-                    out = karnOut;                    
-                } else {                     
-                    SendIt("IDENT " + IDENT);                    
-                }            
+                    out = karnOut;
+                    } else {
+                        SendIt("IDENT " + IDENT);
+                    }                     
+                     
+               // } else {                     
+               //     SendIt("IDENT " + IDENT);                    
+               // }            
                 
                 success = true;            
             } else if (sentmessage.equals("MAKE_CERTIFICATE")){

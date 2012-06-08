@@ -104,6 +104,7 @@ public class ActiveClient extends MessageParser implements Runnable
                 }
             } else if (resultCommand.equals("CERTIFICATE")) {
                 try {
+                    if ( encrypting ){
                     String ident = st.nextToken();
                     String cert = st.nextToken();
                     MessageDigest mdsha = MessageDigest.getInstance("SHA-1");
@@ -116,6 +117,7 @@ public class ActiveClient extends MessageParser implements Runnable
                     if (m.compareTo(certNumber) != 0) {
                         // we need to explode here.  the monitor is not authentic.
                         System.out.println("danger danger monitor not authentic");
+                    }
                     }
                 } catch (NoSuchAlgorithmException ex) {
                     ex.printStackTrace();
